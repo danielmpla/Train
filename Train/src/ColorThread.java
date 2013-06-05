@@ -1,9 +1,7 @@
-import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.addon.ColorHTSensor;
-import lejos.robotics.Color;
 
 
 public class ColorThread extends Thread{
@@ -18,7 +16,7 @@ public class ColorThread extends Thread{
 	
 	public void run(){
 		while(true){
-			if(colorSensor.getColor().getRed() > 190 && colorSensor.getColor().getGreen() > 45 && colorSensor.getColor().getGreen() < 110 && colorSensor.getColor().getBlue() > 25 && colorSensor.getColor().getBlue() < 78){ //ROT
+			if(colorSensor.getColor().getRed() < 190 && colorSensor.getColor().getGreen() > 45 && colorSensor.getColor().getGreen() < 110 && colorSensor.getColor().getBlue() > 25 && colorSensor.getColor().getBlue() < 78){ //ROT
 				LCD.clear();
 				LCD.drawString("ROT", 1, 2);
 				//waitOnColor.wait(Main.RED, true, 600);
@@ -51,7 +49,7 @@ public class ColorThread extends Thread{
 					e.printStackTrace();
 				}
 			}
-			if(colorSensor.getColor().getRed() > 250 && colorSensor.getColor().getGreen() > 250 && colorSensor.getColor().getBlue() < 100){ //GELB
+			if(colorSensor.getColor().getRed() > 250 && colorSensor.getColor().getGreen() > 250 && colorSensor.getColor().getBlue() < 150){ //GELB
 				LCD.clear();
 				LCD.drawString("GELB", 1, 2);
 				//waitOnColor.wait(Main.YELLOW, true, 600);
