@@ -17,6 +17,7 @@ public class ColorThread extends Thread{
 	public void run(){
 		while(true){
 			if(colorSensor.getColor().getRed() < 190 && colorSensor.getColor().getGreen() > 45 && colorSensor.getColor().getGreen() < 110 && colorSensor.getColor().getBlue() > 25 && colorSensor.getColor().getBlue() < 78){ //ROT
+				end = false;
 				LCD.clear();
 				LCD.drawString("ROT", 1, 2);
 				//waitOnColor.wait(Main.RED, true, 600);
@@ -40,7 +41,6 @@ public class ColorThread extends Thread{
 				LCD.drawString("BLAU", 1, 2);
 				Motor.B.setSpeed(250);
 				Motor.C.setSpeed(250);
-				
 				try {
 					sleep(1000);
 					LCD.clear();
@@ -50,6 +50,7 @@ public class ColorThread extends Thread{
 				}
 			}
 			if(colorSensor.getColor().getRed() > 250 && colorSensor.getColor().getGreen() > 250 && colorSensor.getColor().getBlue() < 150){ //GELB
+				end = false;
 				LCD.clear();
 				LCD.drawString("GELB", 1, 2);
 				//waitOnColor.wait(Main.YELLOW, true, 600);
