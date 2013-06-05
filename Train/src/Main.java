@@ -1,4 +1,5 @@
 import lejos.nxt.Button;
+import lejos.nxt.LCD;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.addon.ColorHTSensor;
@@ -10,7 +11,7 @@ public class Main {
 	static final int YELLOW = 3;
 	static final int BLUE = 4;
 	static final int GREEN = 1;
-	int actualSpeed = 600;
+	static final int speed = 600;
 	/**
 	 * @param args
 	 */
@@ -20,14 +21,14 @@ public class Main {
 	}
 	
 	public int getSpeed(){
-		return actualSpeed;
+		return speed;
 	}
 	
 	
 	public Main(){
 		//int actualSpeed = 300;
-		Motor.B.setSpeed(actualSpeed);
-		Motor.C.setSpeed(actualSpeed);
+		Motor.B.setSpeed(speed);
+		Motor.C.setSpeed(speed);
 		
 		ColorThread colorThread = new ColorThread();
 		colorThread.setDaemon(true);
@@ -38,7 +39,14 @@ public class Main {
 		Motor.C.forward();
 		
 		while(Button.readButtons() != Button.ID_ESCAPE){
-			
+			if(colorSensor.getColor().getRed() < 170 && colorSensor.getColor().getRed() > 50 && colorSensor.getColor().getGreen() > 80 && colorSensor.getColor().getGreen() < 225 && colorSensor.getColor().getBlue() > 40 && colorSensor.getColor().getBlue() < 200){ //GRÜN		
+				LCD.drawString("GRUEN", 1, 2);
+				
+				Motor.B.setSpeed(speed);
+				Motor.C.setSpeed(speed);
+				
+				colorThread.setEnd(true);
+			}
 		}
 		System.exit(0);
 		try {
