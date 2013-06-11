@@ -1,16 +1,15 @@
 import lejos.nxt.Button;
+import lejos.nxt.LCD;
 import lejos.nxt.Motor;
-import lejos.nxt.SensorPort;
-import lejos.nxt.addon.ColorHTSensor;
+import lejos.util.TextMenu;
 
 
 public class Main {
-	ColorHTSensor colorSensor = new ColorHTSensor(SensorPort.S4);
 	static final int RED = 0;
 	static final int YELLOW = 3;
 	static final int BLUE = 4;
 	static final int GREEN = 1;
-	int actualSpeed = 600;
+	static final int SPEED = 500;
 	/**
 	 * @param args
 	 */
@@ -19,26 +18,51 @@ public class Main {
 		new Main();
 	}
 	
-	public int getSpeed(){
-		return actualSpeed;
-	}
-	
-	
 	public Main(){
 		//int actualSpeed = 300;
-		Motor.B.setSpeed(actualSpeed);
-		Motor.C.setSpeed(actualSpeed);
+		Motor.B.setSpeed(SPEED);
+		Motor.C.setSpeed(SPEED);
 		
-		ColorThread colorThread = new ColorThread();
+		String[] trainItems = {"kleiner Zug", "grosser Zug"};
+		String[] locationItems = {"Grosshandel", "Kunde"};
+		String[] colorItems = {"1", "2", "3"};
+		TextMenu trainSizeMenu = new TextMenu(trainItems, 2, "Zugart waehlen");
+		TextMenu colorIDMenu = new TextMenu(colorItems, 2, "Color ID waehlen");
+		TextMenu locationMenu = new TextMenu(locationItems, 2, "Startpunktwahl!");
+		
+		boolean isBigTrain;
+		int direction;
+		int colorSensorID;
+		
+		if(trainSizeMenu.select() == 0){
+			isBigTrain = false;
+		}else{
+			isBigTrain = true;
+		}
+		
+		if(locationMenu.select() == 0){
+			direction = 1;
+		}else{
+			direction = -1;
+		}
+		
+		colorSensorID = colorIDMenu.select() + 1;
+		
+		ColorThread colorThread = new ColorThread(isBigTrain, colorSensorID, direction);
 		colorThread.setDaemon(true);
 		colorThread.start();
-		
-		
-		Motor.B.forward();
-		Motor.C.forward();
-		
+		if(direction == 1){
+			Motor.B.forward();
+			Motor.C.forward();
+		}else{
+			Motor.B.backward();
+			Motor.C.backward();
+		}
 		while(Button.readButtons() != Button.ID_ESCAPE){
-			
+			if(Button.readButtons() == Button.ID_ENTER){
+				Motor.B.setSpeed(SPEED);
+				Motor.C.setSpeed(SPEED);
+			}
 		}
 		System.exit(0);
 		try {
