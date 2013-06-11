@@ -2,76 +2,157 @@ import lejos.nxt.LCD;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.addon.ColorHTSensor;
+import lejos.robotics.Color;
 
 
 public class ColorThread extends Thread{
 
-	ColorHTSensor colorSensor = new ColorHTSensor(SensorPort.S4);
-	WaitOnColor waitOnColor = new WaitOnColor();
-	boolean end = false;
+	private ColorHTSensor colorSensor = new ColorHTSensor(SensorPort.S4);
+	private WaitOnColor waitOnColor = new WaitOnColor();
+	private int direction;
+	private boolean isBigTrain;
+	private int colorSensorID;// NXT_07 = 1, NXT_03 = 2, NXT4 = 3
 	
-	public void setEnd(boolean bool){
-		end = bool;
+	public ColorThread(boolean isBigTrain, int colorSensorID, int direction){
+		this.isBigTrain = isBigTrain;
+		this.colorSensorID = colorSensorID;
+		this.direction = direction;
+	}
+	
+	public int getColorID(int red, int green, int blue){
+		switch (colorSensorID){
+		case 1:
+			if(red > 190 && green > 45 && green < 110 && blue > 25 && blue < 78){ //ROT
+				LCD.clear();
+				LCD.drawInt(Color.RED, 6, 6);
+				return Color.RED;
+			}
+			if(red > 35 && red < 80 && green > 80 && green < 130 && blue > 170 && blue < 255){ //BLAU
+				LCD.clear();
+				LCD.drawInt(Color.BLUE, 6, 6);
+				return Color.BLUE;
+			}
+			if(red > 250 && green > 250 && blue < 150){ //GELB
+				LCD.clear();
+				LCD.drawInt(Color.YELLOW, 6, 6);
+				return Color.YELLOW;
+			}
+			LCD.clear();
+			LCD.drawInt(255, 6, 6);
+			return 255;
+		case 2:
+			if(red > 150 && green > 20 && green < 65 && blue < 30){ //ROT
+				LCD.clear();
+				LCD.drawInt(Color.RED, 6, 6);
+				return Color.RED;
+			}
+			if(red > 35 && red < 80 && green > 80 && green < 130 && blue > 170 && blue < 255){ //BLAU
+				LCD.clear();
+				LCD.drawInt(Color.BLUE, 6, 6);
+				return Color.BLUE;
+			}
+			if(red > 225 && green > 190 && blue < 25){ //GELB
+				LCD.clear();
+				LCD.drawInt(Color.YELLOW, 6, 6);
+				return Color.YELLOW;
+			}
+			LCD.clear();
+			LCD.drawInt(255, 6, 6);
+			return 255;
+		case 3:
+			if(red > 190 && green > 45 && green < 110 && blue > 25 && blue < 78){ //ROT
+				LCD.clear();
+				LCD.drawInt(Color.RED, 6, 6);
+				return Color.RED;
+			}
+			if(red > 35 && red < 80 && green > 80 && green < 130 && blue > 170 && blue < 255){ //BLAU
+				LCD.clear();
+				LCD.drawInt(Color.BLUE, 6, 6);
+				return Color.BLUE;
+			}
+			if(red > 250 && green > 250 && blue < 150){ //GELB
+				LCD.clear();
+				LCD.drawInt(Color.YELLOW, 6, 6);
+				return Color.YELLOW;
+			}
+			LCD.clear();
+			LCD.drawInt(255, 6, 6);
+			return 255;
+		default:
+			return 255;
+		}
+	}
+	
+	public boolean notGreen(){
+		switch (colorSensorID){
+		case 1:
+			return !(colorSensor.getColor().getRed() < 170 && colorSensor.getColor().getRed() > 25 && colorSensor.getColor().getGreen() > 75 && colorSensor.getColor().getGreen() < 225 && colorSensor.getColor().getBlue() > 40 && colorSensor.getColor().getBlue() < 200);
+		case 2:
+			return !(colorSensor.getColor().getRed() < 70 && colorSensor.getColor().getRed() > 15 && colorSensor.getColor().getGreen() > 55 && colorSensor.getColor().getGreen() < 90 && colorSensor.getColor().getBlue() > 20 && colorSensor.getColor().getBlue() < 65);
+		case 3:
+		default:
+			return false;	
+		}
+	}
+	
+	public int getDirection(){
+		return direction;
 	}
 	
 	public void run(){
 		while(true){
-			if(colorSensor.getColor().getRed() < 190 && colorSensor.getColor().getGreen() > 45 && colorSensor.getColor().getGreen() < 110 && colorSensor.getColor().getBlue() > 25 && colorSensor.getColor().getBlue() < 78){ //ROT
-				end = false;
+			switch (getColorID(colorSensor.getColor().getRed(), colorSensor.getColor().getGreen(), colorSensor.getColor().getBlue())) {
+			case Color.RED:
 				LCD.clear();
 				LCD.drawString("ROT", 1, 2);
 				//waitOnColor.wait(Main.RED, true, 600);
 				Motor.B.stop(true);
 				Motor.C.stop(true);
-				while(!end){
+				while(notGreen()){
 				}
-				end = false;
-				Motor.B.forward();
-				Motor.C.forward();
-				try {
-					LCD.clear();
-					sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if(direction == -1){
+					Motor.B.backward();
+					Motor.C.backward();
+				}else{
+					Motor.B.forward();
+					Motor.C.forward();
 				}
-			}
-			if(colorSensor.getColor().getRed() > 35 && colorSensor.getColor().getRed() < 80 && colorSensor.getColor().getGreen() > 80 && colorSensor.getColor().getGreen() < 130 && colorSensor.getColor().getBlue() > 170 && colorSensor.getColor().getBlue() < 255){ //BLAU
+				
+				LCD.clear();
+				
+				break;
+			case Color.BLUE:
 				LCD.clear();
 				LCD.drawString("BLAU", 1, 2);
 				Motor.B.setSpeed(250);
 				Motor.C.setSpeed(250);
-				try {
-					sleep(1000);
-					LCD.clear();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(colorSensor.getColor().getRed() > 250 && colorSensor.getColor().getGreen() > 250 && colorSensor.getColor().getBlue() < 150){ //GELB
-				end = false;
+				LCD.clear();
+				
+				break;
+			case Color.YELLOW:
 				LCD.clear();
 				LCD.drawString("GELB", 1, 2);
 				//waitOnColor.wait(Main.YELLOW, true, 600);
 				Motor.B.stop(true);
 				Motor.C.stop(true);
-				Motor.A.rotateTo(-30);
-				while(!end){
+				if(direction == -1){
+					Motor.A.rotateTo(-30);
 				}
-				end = false;
+				while(notGreen()){
+				}
+				direction = direction * -1;
 				Motor.A.rotateTo(0);
-				Motor.B.forward();
-				Motor.C.forward();
-				try {
-					LCD.clear();
-					sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if(direction == -1){
+					Motor.B.backward();
+					Motor.C.backward();
+				}else{
+					Motor.B.forward();
+					Motor.C.forward();
 				}
+				LCD.clear();
+					
+				break;
 			}
-			
 		}
 	}
 }
