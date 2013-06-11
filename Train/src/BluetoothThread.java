@@ -17,21 +17,20 @@ import lejos.nxt.comm.NXTConnection;
  * */
 public class BluetoothThread extends Thread {
 
-	private static OutputStream outputStream; 
-	private static InputStream inputStream;
-	private static RemoteDevice brickConnector;
-	private static BTConnection link;
-	private static boolean host;
+	private OutputStream outputStream; 
+	private InputStream inputStream;
+	private RemoteDevice brickConnector;
+	private BTConnection link;
 	
-	private static String connecting = "connecting...";
-	private static String waiting = "waiting...";
-	private static String closing = "closing...";
-	private static String connected = "connected :)";
-	private static String failed = "failed :(";
+	private boolean host;
+	private boolean waiting;
+	private boolean passed;
 	
 	public BluetoothThread(boolean isHost) {
 		
 		setHost(isHost);
+		setWaiting(false);
+		setPassed(false);
 		
 		if ( isHost() ) {
 			connectToOtherBrick();
@@ -41,14 +40,14 @@ public class BluetoothThread extends Thread {
 		}
 	}
 	
-	private static void connectToOtherBrick() { 
-		LCD.drawString(connecting, 3, 3);
+	private void connectToOtherBrick() { 
+		LCD.drawString("connecting...", 3, 3);
 		
 		brickConnector = Bluetooth.getKnownDevice("NXT_3");
 
 		if ( brickConnector == null ) {
 		  LCD.clear();
-		  LCD.drawString("No such device", 0, 0);
+		  LCD.drawString("No such device", 3, 3);
 		  Button.waitForAnyPress();
 		  System.exit(1);
 		}
@@ -57,7 +56,7 @@ public class BluetoothThread extends Thread {
 
 		if (link == null) {
 		  LCD.clear();
-		  LCD.drawString(failed, 0, 0);
+		  LCD.drawString("failed :(", 3, 3);
 		  Button.waitForAnyPress();
 		  System.exit(1);
 		}
@@ -66,16 +65,16 @@ public class BluetoothThread extends Thread {
 		setInputStream(link.openDataInputStream());
 		
 		LCD.clear();
-		LCD.drawString(connected, 3, 3);
+		LCD.drawString("success :)", 3, 3);
 	}
-	private static void waitForConnection() { 
-		LCD.drawString(waiting, 3, 3); 
+	private void waitForConnection() { 
+		LCD.drawString("waiting...", 3, 3); 
 		
 		link = Bluetooth.waitForConnection(5000, NXTConnection.PACKET);
 		
 		if (link == null) {
 			  LCD.clear();
-			  LCD.drawString(failed, 0, 0);
+			  LCD.drawString("failed :(", 3, 3);
 			  Button.waitForAnyPress();
 			  System.exit(1);
 			}
@@ -84,37 +83,44 @@ public class BluetoothThread extends Thread {
 		setInputStream(link.openDataInputStream());
 		
 		LCD.clear();
-		LCD.drawString(connected, 3, 3);
+		LCD.drawString("success :)", 3, 3);
 	}
 	
-	private static void listenToOtherBrick() {
+	private void listenToOtherBrick() {
 		try {
 			
 			int signal = getInputStream().read();
 			
-			if(signal == 0) { /* anderer Zug fährt */ }
-			if(signal == 1) { /* anderer Zug wartet an Weiche */ }
-			if(signal == 2) { /* anderer Zug ist vorbei gefahren */ }
+			if(signal == 0) { /* anderer Zug fährt */
+				// mach nichts
+			}
+			if(signal == 1) { /* anderer Zug wartet an Weiche */
+				// mach nichts
+			}
+			if(signal == 2) { /* anderer Zug fährt vorbei */
+				// fahr weiter !!
+			}
 
 		} catch (IOException e) {
-			LCD.drawString("Communication error", 0, 0);
+			LCD.drawString("listening error", 3, 3);
 			Button.waitForAnyPress();
 			System.exit(1);
 		}
 	}
 	
-	private static void talkToOtherBrick() {
+	private void talkToOtherBrick() {
 		try {
-
-			if(true /* Zug fährt */ ) { getOutputStream().write(0); }
-			if(true /* Warte an Weiche */ ) { getOutputStream().write(1); }
-			if(true /* Zug fährt vorbei */ ) { getOutputStream().write(2); }
+			if( isWaiting() ) { getOutputStream().write(1); }
+			else if ( hasPassed() ) { getOutputStream().write(2); }
+			else { getOutputStream().write(0); }
 			
+			getOutputStream().flush();
 		} catch (IOException e) {
-			LCD.drawString("Communication error", 0, 0);
+			LCD.drawString("talking error", 3, 3);
 			Button.waitForAnyPress();
 			System.exit(1);
-		} 
+		}
+		
 	}
 	
 	@Override
@@ -126,33 +132,39 @@ public class BluetoothThread extends Thread {
 		}
 		
 		LCD.clear();
-		LCD.drawString(closing, 3, 3);
+		LCD.drawString("closing...", 3, 3);
 	}
 	
 	/* --------------------------------------------------------------------------- */
 
-	public static InputStream getInputStream() {
+	private InputStream getInputStream() {
 		return inputStream;
 	}
-
-	public static void setInputStream(InputStream inputStream) {
-		BluetoothThread.inputStream = inputStream;
+	private void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
 	}
-
-	public static OutputStream getOutputStream() {
+	private OutputStream getOutputStream() {
 		return outputStream;
 	}
-
-	public static void setOutputStream(OutputStream outputStream) {
-		BluetoothThread.outputStream = outputStream;
+	private void setOutputStream(OutputStream outputStream) {
+		this.outputStream = outputStream;
 	}
-
-	public static boolean isHost() {
+	private boolean isHost() {
 		return host;
 	}
-
-	public static void setHost(boolean host) {
-		BluetoothThread.host = host;
+	private void setHost(boolean host) {
+		this.host = host;
 	}
-	
+	private boolean isWaiting() {
+		return waiting;
+	}
+	public void setWaiting(boolean waiting) {
+		this.waiting = waiting;
+	}
+	private boolean hasPassed() {
+		return passed;
+	}
+	public void setPassed(boolean passed) {
+		this.passed = passed;
+	}
 }
