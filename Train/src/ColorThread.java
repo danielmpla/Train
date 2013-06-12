@@ -22,17 +22,17 @@ public class ColorThread extends Thread{
 	public int getColorID(int red, int green, int blue){
 		switch (colorSensorID){
 		case 1:
-			if(red > 190 && green > 45 && green < 110 && blue > 25 && blue < 78){ //ROT
+			if(red > 190 && green > 35 && green < 70 && blue > 15 && blue < 40){ //ROT
 				LCD.clear();
 				LCD.drawInt(Color.RED, 6, 6);
 				return Color.RED;
 			}
-			if(red > 35 && red < 80 && green > 80 && green < 130 && blue > 170 && blue < 255){ //BLAU
+			/*if(red > 35 && red < 80 && green > 80 && green < 130 && blue > 170 && blue < 255){ //BLAU
 				LCD.clear();
 				LCD.drawInt(Color.BLUE, 6, 6);
 				return Color.BLUE;
-			}
-			if(red > 250 && green > 250 && blue < 150){ //GELB
+			}*/
+			if(red > 250 && green > 250 && blue < 25){ //GELB
 				LCD.clear();
 				LCD.drawInt(Color.YELLOW, 6, 6);
 				return Color.YELLOW;
@@ -46,7 +46,7 @@ public class ColorThread extends Thread{
 				LCD.drawInt(Color.RED, 6, 6);
 				return Color.RED;
 			}
-			if(red > 35 && red < 80 && green > 80 && green < 130 && blue > 170 && blue < 255){ //BLAU
+			if(red > 15 && red < 45 && green > 55 && green < 80 && blue > 150 && blue < 180){ //BLAU
 				LCD.clear();
 				LCD.drawInt(Color.BLUE, 6, 6);
 				return Color.BLUE;
@@ -60,12 +60,12 @@ public class ColorThread extends Thread{
 			LCD.drawInt(255, 6, 6);
 			return 255;
 		case 3:
-			if(red > 190 && green > 45 && green < 110 && blue > 25 && blue < 78){ //ROT
+			if(red > 185 && green > 20 && green < 95 && blue > 0 && blue < 60){ //ROT
 				LCD.clear();
 				LCD.drawInt(Color.RED, 6, 6);
 				return Color.RED;
 			}
-			if(red > 35 && red < 80 && green > 80 && green < 130 && blue > 170 && blue < 255){ //BLAU
+			if(red > 15 && red < 50 && green > 65 && green < 105 && blue > 175 && blue < 210){ //BLAU
 				LCD.clear();
 				LCD.drawInt(Color.BLUE, 6, 6);
 				return Color.BLUE;
@@ -86,10 +86,11 @@ public class ColorThread extends Thread{
 	public boolean notGreen(){
 		switch (colorSensorID){
 		case 1:
-			return !(colorSensor.getColor().getRed() < 170 && colorSensor.getColor().getRed() > 25 && colorSensor.getColor().getGreen() > 75 && colorSensor.getColor().getGreen() < 225 && colorSensor.getColor().getBlue() > 40 && colorSensor.getColor().getBlue() < 200);
+			return !(colorSensor.getColor().getRed() < 80 && colorSensor.getColor().getRed() > 25 && colorSensor.getColor().getGreen() > 55 && colorSensor.getColor().getGreen() < 135 && colorSensor.getColor().getBlue() > 35 && colorSensor.getColor().getBlue() < 85);
 		case 2:
 			return !(colorSensor.getColor().getRed() < 70 && colorSensor.getColor().getRed() > 15 && colorSensor.getColor().getGreen() > 55 && colorSensor.getColor().getGreen() < 90 && colorSensor.getColor().getBlue() > 20 && colorSensor.getColor().getBlue() < 65);
 		case 3:
+			return !(colorSensor.getColor().getRed() < 105 && colorSensor.getColor().getRed() > 35 && colorSensor.getColor().getGreen() > 85 && colorSensor.getColor().getGreen() < 145 && colorSensor.getColor().getBlue() > 40 && colorSensor.getColor().getBlue() < 110);
 		default:
 			return false;	
 		}

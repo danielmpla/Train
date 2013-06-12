@@ -25,7 +25,7 @@ public class Main {
 		
 		String[] trainItems = {"kleiner Zug", "grosser Zug"};
 		String[] locationItems = {"Grosshandel", "Kunde"};
-		String[] colorItems = {"1", "2", "3"};
+		String[] colorItems = {"1 (NXT_07)", "2 (NXT_03)", "3 (NXT4)"};
 		TextMenu trainSizeMenu = new TextMenu(trainItems, 2, "Zugart waehlen");
 		TextMenu colorIDMenu = new TextMenu(colorItems, 2, "Color ID waehlen");
 		TextMenu locationMenu = new TextMenu(locationItems, 2, "Startpunktwahl!");
