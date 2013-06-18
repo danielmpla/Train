@@ -12,11 +12,16 @@ public class ColorThread extends Thread{
 	private int direction;
 	private boolean isBigTrain;
 	private int colorSensorID;// NXT_07 = 1, NXT_03 = 2, NXT4 = 3
+	private boolean end;
 	
 	public ColorThread(boolean isBigTrain, int colorSensorID, int direction){
 		this.isBigTrain = isBigTrain;
 		this.colorSensorID = colorSensorID;
 		this.direction = direction;
+	}
+	
+	public void setEnd(boolean b){
+		end = b;
 	}
 	
 	public int getColorID(int red, int green, int blue){
