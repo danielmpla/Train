@@ -22,13 +22,16 @@ public class BluetoothThread extends Thread {
 	private RemoteDevice brickConnector;
 	private BTConnection link;
 	
+	private ColorThread colorThread;
+	
 	private boolean host;
 	private boolean waiting;
 	private boolean passed;
 	
-	public BluetoothThread(boolean isHost) {
+	public BluetoothThread(boolean isHost, ColorThread colorThread) {
 		
 		setHost(isHost);
+		setColorThread(colorThread);
 		setWaiting(false);
 		setPassed(false);
 		
@@ -98,7 +101,7 @@ public class BluetoothThread extends Thread {
 				// mach nichts
 			}
 			if(signal == 2) { /* anderer Zug fährt vorbei */
-				// fahr weiter !!
+				colorThread.setEnd(true);
 			}
 
 		} catch (IOException e) {
@@ -154,6 +157,9 @@ public class BluetoothThread extends Thread {
 	}
 	private void setHost(boolean host) {
 		this.host = host;
+	}
+	private void setColorThread(ColorThread colorThread) {
+		this.colorThread = colorThread;
 	}
 	private boolean isWaiting() {
 		return waiting;
