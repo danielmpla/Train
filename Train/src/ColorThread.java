@@ -1,3 +1,5 @@
+import java.util.BitSet;
+
 import lejos.nxt.LCD;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
@@ -12,7 +14,7 @@ public class ColorThread extends Thread{
 	private int direction;
 	private boolean isBigTrain;
 	private int colorSensorID;// NXT_07 = 1, NXT_03 = 2, NXT4 = 3
-	private boolean end;
+	private boolean end = false;
 	
 	public ColorThread(boolean isBigTrain, int colorSensorID, int direction){
 		this.isBigTrain = isBigTrain;
@@ -130,8 +132,11 @@ public class ColorThread extends Thread{
 			case Color.BLUE:
 				LCD.clear();
 				LCD.drawString("BLAU", 1, 2);
-				Motor.B.setSpeed(250);
-				Motor.C.setSpeed(250);
+				Motor.B.stop();
+				Motor.C.stop();
+				
+				while(!end){}
+				
 				LCD.clear();
 				
 				break;
@@ -141,7 +146,7 @@ public class ColorThread extends Thread{
 				//waitOnColor.wait(Main.YELLOW, true, 600);
 				Motor.B.stop(true);
 				Motor.C.stop(true);
-				if(direction == -1){
+				if(direction == -1 && !isBigTrain || direction == 1 && isBigTrain){
 					Motor.A.rotateTo(-30);
 				}
 				while(notGreen()){
