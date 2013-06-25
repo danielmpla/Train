@@ -91,21 +91,18 @@ public class BluetoothThread extends Thread {
 	private void listenToOtherBrick() {
 		try {
 			if (getInputStream().available() > 0) {
-				
 				int signal = getInputStream().read();
-				
-				LCD.drawString("Signal:"+signal, 7, 5);
 				
 				if (signal == 0) { /* anderer Zug fährt vorbei */
 					colorThread.setEnd(true);
 				}
 				if (signal == 1) { /* anderer Zug fährt */
-					// mach nichts
+					
 				}
 				if (signal == 10) { /* anderer Zug wartet an Position 1 */
 					if (getPositionNumber() == 20) {
-						colorThread.setEnd(true);
 						setPassed(true);
+						colorThread.setEnd(true);
 					}
 					if (getPositionNumber() == 30) {
 						colorThread.setEnd(true);
@@ -116,8 +113,8 @@ public class BluetoothThread extends Thread {
 				}
 				if (signal == 20) { /* anderer Zug wartet an Position 2 */
 					if (getPositionNumber() == 10) {
-						colorThread.setEnd(true);
 						setPassed(true);
+						colorThread.setEnd(true);
 					}
 					if (getPositionNumber() == 30) {
 						colorThread.setEnd(true);
@@ -134,8 +131,8 @@ public class BluetoothThread extends Thread {
 						colorThread.setEnd(true);
 					}
 					if (getPositionNumber() == 40) {
-						colorThread.setEnd(true);
 						setPassed(true);
+						colorThread.setEnd(true);
 					}
 				}
 				if (signal == 40) { /* anderer Zug wartet an Position 4 */
@@ -146,10 +143,12 @@ public class BluetoothThread extends Thread {
 						colorThread.setEnd(true);
 					}
 					if (getPositionNumber() == 30) {
-						colorThread.setEnd(true);
 						setPassed(true);
+						colorThread.setEnd(true);
 					}
 				}
+				
+				LCD.drawString("Signal: " + signal + " ", 7, 5);
 			}
 		} catch (IOException e) {
 			LCD.drawString("listening error", 3, 3);
@@ -162,18 +161,22 @@ public class BluetoothThread extends Thread {
 		try {
 			if (hasPassed()) {
 				getOutputStream().write(0);
-			} else if (isWaiting()) {
+				getOutputStream().flush();
+				LCD.drawString("Gesendet: " + 0 + " ", 7, 6);
+				setPassed(false);
+			}
+			if (isWaiting()) {
 				getOutputStream().write(getPositionNumber());
+				getOutputStream().flush();
+				LCD.drawString("Gesendet: " + getPositionNumber(), 7, 6);
 			} else {
 				getOutputStream().write(1);
-			}
-
-			getOutputStream().flush();
-			if (hasPassed()) {
-				setPassed(true);
+				getOutputStream().flush();
+				LCD.drawString("Gesendet: " + 1 + " ", 7, 6);
 			}
 			
 		} catch (IOException e) {
+			LCD.clear();
 			LCD.drawString("talking error", 3, 3);
 			Button.waitForAnyPress();
 			System.exit(1);
