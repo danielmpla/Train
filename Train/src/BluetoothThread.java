@@ -69,7 +69,6 @@ public class BluetoothThread extends Thread {
 		LCD.clear();
 		LCD.drawString("success :)", 3, 3);
 	}
-
 	private void waitForConnection() {
 		LCD.drawString("waiting...", 3, 3);
 
@@ -91,10 +90,12 @@ public class BluetoothThread extends Thread {
 
 	private void listenToOtherBrick() {
 		try {
-
 			if (getInputStream().available() > 0) {
+				
 				int signal = getInputStream().read();
+				
 				LCD.drawString("Signal:"+signal, 7, 5);
+				
 				if (signal == 0) { /* anderer Zug fährt vorbei */
 					colorThread.setEnd(true);
 				}
@@ -169,7 +170,7 @@ public class BluetoothThread extends Thread {
 
 			getOutputStream().flush();
 			if (hasPassed()) {
-				setPassed(false);
+				setPassed(true);
 			}
 			
 		} catch (IOException e) {
@@ -194,7 +195,7 @@ public class BluetoothThread extends Thread {
 
 	/*
 	 * --------------------------------------------------------------------------
-	 * -
+	 * 
 	 */
 
 	private InputStream getInputStream() {
