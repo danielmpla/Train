@@ -11,15 +11,21 @@ public class ColorThread extends Thread{
 
 	private ColorHTSensor colorSensor = new ColorHTSensor(SensorPort.S4);
 	private WaitOnColor waitOnColor = new WaitOnColor();
-	private int direction;
+	private int direction; //-1 kommt vom Kunde, 1 kommt vom Groﬂhandel (groﬂer Zug umgekehrt!)
 	private boolean isBigTrain;
 	private int colorSensorID;// NXT_07 = 1, NXT_03 = 2, NXT4 = 3
 	private boolean end = false;
+	private boolean isBehindCross = false;
+	private BluetoothThread bluetooth;
 	
 	public ColorThread(boolean isBigTrain, int colorSensorID, int direction){
 		this.isBigTrain = isBigTrain;
 		this.colorSensorID = colorSensorID;
 		this.direction = direction;
+	}
+	
+	public void setBluetoothThread(BluetoothThread blue){
+		bluetooth = blue;
 	}
 	
 	public void setEnd(boolean b){
@@ -160,9 +166,13 @@ public class ColorThread extends Thread{
 					Motor.B.forward();
 					Motor.C.forward();
 				}
+				isBehindCross = false;
 				LCD.clear();
 					
 				break;
+			}
+			if(!notGreen()){
+				isBehindCross = true;
 			}
 		}
 	}
