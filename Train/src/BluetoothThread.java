@@ -161,7 +161,6 @@ public class BluetoothThread extends Thread {
 		try {
 			if (hasPassed()) {
 				getOutputStream().write(0);
-				setPassed(false);
 			} else if (isWaiting()) {
 				getOutputStream().write(getPositionNumber());
 			} else {
@@ -169,6 +168,10 @@ public class BluetoothThread extends Thread {
 			}
 
 			getOutputStream().flush();
+			if (hasPassed()) {
+				setPassed(false);
+			}
+			
 		} catch (IOException e) {
 			LCD.drawString("talking error", 3, 3);
 			Button.waitForAnyPress();
