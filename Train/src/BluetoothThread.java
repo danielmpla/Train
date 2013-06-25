@@ -148,6 +148,7 @@ public class BluetoothThread extends Thread {
 					}
 				}
 				
+				LCD.drawString("Position: " + getPositionNumber() + " ", 3, 4);
 				LCD.drawString("Signal: " + signal + "  ", 3, 5);
 			}
 		} catch (IOException e) {
