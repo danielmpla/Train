@@ -148,7 +148,7 @@ public class BluetoothThread extends Thread {
 					}
 				}
 				
-				LCD.drawString("Signal: " + signal + " ", 7, 5);
+				LCD.drawString("Signal: " + signal + "  ", 3, 5);
 			}
 		} catch (IOException e) {
 			LCD.drawString("listening error", 3, 3);
@@ -160,19 +160,19 @@ public class BluetoothThread extends Thread {
 	private void talkToOtherBrick() {
 		try {
 			if (hasPassed()) {
+				LCD.drawString("Gesendet: " + 0 + " ", 3, 6);
 				getOutputStream().write(0);
 				getOutputStream().flush();
-				LCD.drawString("Gesendet: " + 0 + " ", 7, 6);
 				setPassed(false);
 			}
 			if (isWaiting()) {
+				LCD.drawString("Gesendet: " + getPositionNumber(), 3, 6);
 				getOutputStream().write(getPositionNumber());
 				getOutputStream().flush();
-				LCD.drawString("Gesendet: " + getPositionNumber(), 7, 6);
 			} else {
+				LCD.drawString("Gesendet: " + 1 + " ", 3, 6);
 				getOutputStream().write(1);
 				getOutputStream().flush();
-				LCD.drawString("Gesendet: " + 1 + " ", 7, 6);
 			}
 			
 		} catch (IOException e) {
