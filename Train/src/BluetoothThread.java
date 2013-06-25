@@ -29,8 +29,7 @@ public class BluetoothThread extends Thread {
 	private int positionNumber;  // 4 verschiedene Haltepunkte
 	private boolean passed;
 	
-	public BluetoothThread(boolean isHost, ColorThread colorThread) {
-		
+	public BluetoothThread(boolean isHost, ColorThread colorThread) {	
 		setHost(isHost);
 		setColorThread(colorThread);
 		setWaiting(false);
@@ -74,7 +73,7 @@ public class BluetoothThread extends Thread {
 	private void waitForConnection() { 
 		LCD.drawString("waiting...", 3, 3); 
 		
-		link = Bluetooth.waitForConnection(5000, NXTConnection.PACKET);
+		link = Bluetooth.waitForConnection(10000, NXTConnection.PACKET);
 		
 		if (link == null) {
 			  LCD.clear();
