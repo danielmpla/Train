@@ -50,12 +50,6 @@ public class ColorThread extends Thread {
 				LCD.drawInt(Color.YELLOW, 6, 6);
 				return Color.YELLOW;
 			}
-			if (red < 80 && red > 25 && green > 55 && green < 135 && blue > 35
-					&& blue < 85) {
-				LCD.clear();
-				LCD.drawInt(Color.GREEN, 6, 6);
-				return Color.GREEN;
-			}
 			LCD.clear();
 			LCD.drawInt(255, 6, 6);
 			return 255;
@@ -76,12 +70,6 @@ public class ColorThread extends Thread {
 				LCD.drawInt(Color.YELLOW, 6, 6);
 				return Color.YELLOW;
 			}
-			if (red < 70 && red > 15 && green > 55 && green < 90 && blue > 20
-					&& blue < 65) {
-				LCD.clear();
-				LCD.drawInt(Color.GREEN, 6, 6);
-				return Color.GREEN;
-			}
 			LCD.clear();
 			LCD.drawInt(255, 6, 6);
 			return 255;
@@ -101,12 +89,6 @@ public class ColorThread extends Thread {
 				LCD.clear();
 				LCD.drawInt(Color.YELLOW, 6, 6);
 				return Color.YELLOW;
-			}
-			if (red < 105 && red > 35 && green > 85 && green < 145 && blue > 40
-					&& blue < 110) {
-				LCD.clear();
-				LCD.drawInt(Color.GREEN, 6, 6);
-				return Color.GREEN;
 			}
 			LCD.clear();
 			LCD.drawInt(255, 6, 6);
@@ -176,7 +158,7 @@ public class ColorThread extends Thread {
 				LCD.drawString("BLAU", 1, 2);
 				Motor.B.stop();
 				Motor.C.stop();
-
+				bluetooth.setWaiting(true);
 				if (direction == 1) {
 					if (isBehindCross) {
 						bluetooth.setPositionNumber(40);//40
@@ -187,17 +169,24 @@ public class ColorThread extends Thread {
 					}
 				} else {
 					if (isBehindCross) {
-						bluetooth.setPositionNumber(30);//30
-						LCD.drawString("Signal 30", 5, 1);
-					} else {
 						bluetooth.setPositionNumber(20);//20
 						LCD.drawString("Signal 20", 5, 1);
+					} else {
+						bluetooth.setPositionNumber(30);//30
+						LCD.drawString("Signal 30", 5, 1);
 					}
 				}
 
 				while (!end) {
 				}
-
+				if (direction == -1) {
+					Motor.B.backward();
+					Motor.C.backward();
+				} else {
+					Motor.B.forward();
+					Motor.C.forward();
+				}
+				bluetooth.setWaiting(false);
 				LCD.clear();
 
 				break;
@@ -231,10 +220,6 @@ public class ColorThread extends Thread {
 				}
 				isBehindCross = false;
 				LCD.clear();
-
-				break;
-			case Color.GREEN:
-				isBehindCross = true;
 
 				break;
 			}
