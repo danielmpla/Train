@@ -94,7 +94,7 @@ public class BluetoothThread extends Thread {
 
 			if (getInputStream().available() > 0) {
 				int signal = getInputStream().read();
-				LCD.drawString("Pos:" + positionNumber, 7, 5);
+				LCD.drawString("Signal:"+signal, 7, 5);
 				if (signal == 0) { /* anderer Zug fährt vorbei */
 					colorThread.setEnd(true);
 				}
