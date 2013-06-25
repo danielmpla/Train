@@ -152,7 +152,8 @@ public class BluetoothThread extends Thread {
 				LCD.drawString("Signal: " + signal + "  ", 3, 5);
 			}
 		} catch (IOException e) {
-			LCD.drawString("listening error", 3, 3);
+			LCD.clear();
+			LCD.drawString("Listening Error", 3, 3);
 			Button.waitForAnyPress();
 			System.exit(1);
 		}
