@@ -29,7 +29,8 @@ public class BluetoothThread extends Thread {
 	private int positionNumber;  // 4 verschiedene Haltepunkte
 	private boolean passed;
 	
-	public BluetoothThread(boolean isHost, ColorThread colorThread) {	
+	public BluetoothThread(boolean isHost, ColorThread colorThread) {
+		LCD.clear();
 		setHost(isHost);
 		setColorThread(colorThread);
 		setWaiting(false);
@@ -46,7 +47,7 @@ public class BluetoothThread extends Thread {
 	private void connectToOtherBrick() { 
 		LCD.drawString("connecting...", 3, 3);
 		
-		brickConnector = Bluetooth.getKnownDevice("NXT_3");
+		brickConnector = Bluetooth.getKnownDevice("NXT4");
 
 		if ( brickConnector == null ) {
 		  LCD.clear();
@@ -73,7 +74,7 @@ public class BluetoothThread extends Thread {
 	private void waitForConnection() { 
 		LCD.drawString("waiting...", 3, 3); 
 		
-		link = Bluetooth.waitForConnection(10000, NXTConnection.PACKET);
+		link = Bluetooth.waitForConnection(15000, NXTConnection.PACKET);
 		
 		if (link == null) {
 			  LCD.clear();
@@ -93,7 +94,7 @@ public class BluetoothThread extends Thread {
 		try {
 			
 			int signal = getInputStream().read();
-			
+			LCD.drawInt(signal, 7, 5);
 			if(signal == 0) { /* anderer Zug fährt vorbei */
 				colorThread.setEnd(true);
 			}

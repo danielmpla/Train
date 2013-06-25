@@ -50,7 +50,16 @@ public class Main {
 		
 		ColorThread colorThread = new ColorThread(isBigTrain, colorSensorID, direction);
 		colorThread.setDaemon(true);
+		
+		boolean isHost = colorSensorID == 2;
+		
+		BluetoothThread bluetoothThread = new BluetoothThread(isHost, colorThread);
+		bluetoothThread.setDaemon(true);
+		bluetoothThread.start();
+		
 		colorThread.start();
+		colorThread.setBluetoothThread(bluetoothThread);
+		
 		if(direction == 1){
 			Motor.B.forward();
 			Motor.C.forward();
