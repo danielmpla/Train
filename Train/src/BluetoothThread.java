@@ -26,6 +26,7 @@ public class BluetoothThread extends Thread {
 	
 	private boolean host;
 	private boolean waiting;
+	private int positionNumber;  // 4 verschiedene Haltepunkte
 	private boolean passed;
 	
 	public BluetoothThread(boolean isHost, ColorThread colorThread) {
@@ -94,14 +95,59 @@ public class BluetoothThread extends Thread {
 			
 			int signal = getInputStream().read();
 			
-			if(signal == 0) { /* anderer Zug fährt */
-				// mach nichts
-			}
-			if(signal == 1) { /* anderer Zug wartet an Weiche */
-				// mach nichts
-			}
-			if(signal == 2) { /* anderer Zug fährt vorbei */
+			if(signal == 0) { /* anderer Zug fährt vorbei */
 				colorThread.setEnd(true);
+			}
+			if(signal == 1) { /* anderer Zug fährt */
+				// mach nichts
+			}
+			if(signal == 10) { /* anderer Zug wartet an Position 1 */
+				if (getPositionNumber() == 20) {
+					colorThread.setEnd(true);
+					setPassed(true);
+				}
+				if (getPositionNumber() == 30) {
+					colorThread.setEnd(true);
+				}
+				if (getPositionNumber() == 40) {
+					colorThread.setEnd(true);
+				}
+			}
+			if(signal == 20) { /* anderer Zug wartet an Position 2 */
+				if (getPositionNumber() == 10) {
+					colorThread.setEnd(true);
+					setPassed(true);
+				}
+				if (getPositionNumber() == 30) {
+					colorThread.setEnd(true);
+				}
+				if (getPositionNumber() == 40) {
+					colorThread.setEnd(true);
+				}
+			}
+			if(signal == 30) { /* anderer Zug wartet an Position 3 */
+				if (getPositionNumber() == 10) {
+					colorThread.setEnd(true);
+				}
+				if (getPositionNumber() == 20) {
+					colorThread.setEnd(true);
+				}
+				if (getPositionNumber() == 40) {
+					colorThread.setEnd(true);
+					setPassed(true);
+				}
+			}
+			if(signal == 40) { /* anderer Zug wartet an Position 4 */
+				if (getPositionNumber() == 10) {
+					colorThread.setEnd(true);
+				}
+				if (getPositionNumber() == 20) {
+					colorThread.setEnd(true);
+				}
+				if (getPositionNumber() == 30) {
+					colorThread.setEnd(true);
+					setPassed(true);
+				}
 			}
 
 		} catch (IOException e) {
@@ -113,9 +159,9 @@ public class BluetoothThread extends Thread {
 	
 	private void talkToOtherBrick() {
 		try {
-			if( isWaiting() ) { getOutputStream().write(1); }
-			else if ( hasPassed() ) { getOutputStream().write(2); }
-			else { getOutputStream().write(0); }
+			if( isWaiting() ) { getOutputStream().write( getPositionNumber() ); }
+			else if ( hasPassed() ) { getOutputStream().write(0); }
+			else { getOutputStream().write(1); }
 			
 			getOutputStream().flush();
 		} catch (IOException e) {
@@ -166,6 +212,12 @@ public class BluetoothThread extends Thread {
 	}
 	public void setWaiting(boolean waiting) {
 		this.waiting = waiting;
+	}
+	public void setPositionNumber(int positionNumber) {
+		this.positionNumber = positionNumber;
+	}
+	private int getPositionNumber() {
+		return positionNumber;
 	}
 	private boolean hasPassed() {
 		return passed;
