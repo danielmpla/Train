@@ -127,7 +127,7 @@ public class BluetoothThread extends Thread {
 				}
 				if (signal == 30) { /* anderer Zug wartet an Position 3 */
 					if (getPositionNumber() == 10) {
-						colorThread.setEnd(true);
+						// warte
 					}
 					if (getPositionNumber() == 20) {
 						colorThread.setEnd(true);
@@ -159,10 +159,10 @@ public class BluetoothThread extends Thread {
 
 	private void talkToOtherBrick() {
 		try {
-			if (isWaiting()) {
-				getOutputStream().write(getPositionNumber());
-			} else if (hasPassed()) {
+			if (hasPassed()) {
 				getOutputStream().write(0);
+			} else if (isWaiting()) {
+				getOutputStream().write(getPositionNumber());
 			} else {
 				getOutputStream().write(1);
 			}
