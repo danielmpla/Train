@@ -10,13 +10,15 @@ public class ColorThread extends Thread {
 
 	private ColorHTSensor colorSensor = new ColorHTSensor(SensorPort.S4);
 	private WaitOnColor waitOnColor = new WaitOnColor();
-	private int direction; // -1 kommt vom Kunde, 1 kommt vom Großhandel (großer
+	private int direction; // -1 kommt vom Kunde, 1 kommt vom Groï¿½handel (groï¿½er
 							// Zug umgekehrt!)
 	private boolean isBigTrain;
 	private int colorSensorID;// NXT_07 = 1, NXT_03 = 2, NXT4 = 3
 	private boolean end = false;
 	private boolean isBehindCross = false;
 	private BluetoothThread bluetooth;
+	
+	private float multiplier;
 
 	public ColorThread(boolean isBigTrain, int colorSensorID, int direction) {
 		this.isBigTrain = isBigTrain;
@@ -33,6 +35,10 @@ public class ColorThread extends Thread {
 	}
 
 	public int getColorID(int red, int green, int blue) {
+		red = (int) (red * multiplier);
+		blue = (int) (blue * multiplier);
+		green = (int) (green * multiplier);
+		
 		switch (colorSensorID) {
 		case 1:
 			if (red > 190 && green > 35 && green < 70 && blue > 15 && blue < 40) { // ROT
@@ -59,8 +65,7 @@ public class ColorThread extends Thread {
 				LCD.drawInt(Color.RED, 6, 6);
 				return Color.RED;
 			}
-			if (red > 15 && red < 45 && green > 55 && green < 80 && blue > 150
-					&& blue < 180) { // BLAU
+			if (red > 15 && red < 45 && green > 55 && green < 80 && blue > 150) { // BLAU
 				LCD.clear();
 				LCD.drawInt(Color.BLUE, 6, 6);
 				return Color.BLUE;
@@ -79,8 +84,7 @@ public class ColorThread extends Thread {
 				LCD.drawInt(Color.RED, 6, 6);
 				return Color.RED;
 			}
-			if (red > 15 && red < 50 && green > 65 && green < 105 && blue > 175
-					&& blue < 210) { // BLAU
+			if (red > 15 && red < 50 && green > 65 && green < 105 && blue > 175) { // BLAU
 				LCD.clear();
 				LCD.drawInt(Color.BLUE, 6, 6);
 				return Color.BLUE;
@@ -101,26 +105,26 @@ public class ColorThread extends Thread {
 	public boolean notGreen() {
 		switch (colorSensorID) {
 		case 1:
-			return !(colorSensor.getColor().getRed() < 80
-					&& colorSensor.getColor().getRed() > 25
-					&& colorSensor.getColor().getGreen() > 55
-					&& colorSensor.getColor().getGreen() < 135
-					&& colorSensor.getColor().getBlue() > 35 && colorSensor
-					.getColor().getBlue() < 85);
+			return !(colorSensor.getColor().getRed() * multiplier < 80
+					&& colorSensor.getColor().getRed() * multiplier > 25
+					&& colorSensor.getColor().getGreen() * multiplier > 55
+					&& colorSensor.getColor().getGreen() * multiplier < 135
+					&& colorSensor.getColor().getBlue() * multiplier > 35 && colorSensor
+					.getColor().getBlue() * multiplier < 85);
 		case 2:
-			return !(colorSensor.getColor().getRed() < 70
-					&& colorSensor.getColor().getRed() > 15
-					&& colorSensor.getColor().getGreen() > 55
-					&& colorSensor.getColor().getGreen() < 90
-					&& colorSensor.getColor().getBlue() > 20 && colorSensor
-					.getColor().getBlue() < 65);
+			return !(colorSensor.getColor().getRed() * multiplier < 70
+					&& colorSensor.getColor().getRed() * multiplier > 15
+					&& colorSensor.getColor().getGreen() * multiplier > 55
+					&& colorSensor.getColor().getGreen() * multiplier < 90
+					&& colorSensor.getColor().getBlue() * multiplier > 20 && colorSensor
+					.getColor().getBlue() * multiplier < 65);
 		case 3:
-			return !(colorSensor.getColor().getRed() < 105
-					&& colorSensor.getColor().getRed() > 35
-					&& colorSensor.getColor().getGreen() > 85
-					&& colorSensor.getColor().getGreen() < 145
-					&& colorSensor.getColor().getBlue() > 40 && colorSensor
-					.getColor().getBlue() < 110);
+			return !(colorSensor.getColor().getRed() * multiplier < 105
+					&& colorSensor.getColor().getRed() * multiplier > 35
+					&& colorSensor.getColor().getGreen() * multiplier > 85
+					&& colorSensor.getColor().getGreen() * multiplier < 145
+					&& colorSensor.getColor().getBlue() * multiplier > 40 && colorSensor
+					.getColor().getBlue() * multiplier < 110);
 		default:
 			return false;
 		}
@@ -131,6 +135,20 @@ public class ColorThread extends Thread {
 	}
 
 	public void run() {
+		colorSensor.initWhiteBalance();
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		int r = colorSensor.getColor().getRed();
+		int g = colorSensor.getColor().getGreen();
+		int b = colorSensor.getColor().getBlue();
+		
+		float average = (r + g + b) / 3;
+		multiplier = 250 / average;
+		
 		while (true) {
 			switch (getColorID(colorSensor.getColor().getRed(), colorSensor
 					.getColor().getGreen(), colorSensor.getColor().getBlue())) {
