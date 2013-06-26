@@ -27,6 +27,7 @@ public class BluetoothThread extends Thread {
 	private boolean waiting;
 	private int positionNumber; // 4 verschiedene Haltepunkte
 	private boolean passed;
+	private int lastPositionOfOtherTrain;
 
 	public BluetoothThread(boolean isHost, ColorThread colorThread) {
 		LCD.clear();
@@ -96,13 +97,14 @@ public class BluetoothThread extends Thread {
 				if (signal == 0) { /* anderer Zug fährt vorbei */
 					colorThread.setEnd(true);
 				}
-				if (signal == 1) { 
-					colorThread.setEnd(false);
+				if (signal == 1) {
+					if(lastPositionOfOtherTrain != getPositionNumber()) {
+						colorThread.setEnd(true);
+					}
 				}
 				if (signal == 10) { /* anderer Zug wartet an Position 1 */
 					if (getPositionNumber() == 20) {
 						setPassed(true);
-						colorThread.setEnd(true);
 					}
 					if (getPositionNumber() == 30) {
 						if(isHost()) {
@@ -112,11 +114,11 @@ public class BluetoothThread extends Thread {
 					if (getPositionNumber() == 40) {
 						colorThread.setEnd(true);
 					}
+					lastPositionOfOtherTrain = signal;
 				}
 				if (signal == 20) { /* anderer Zug wartet an Position 2 */
 					if (getPositionNumber() == 10) {
 						setPassed(true);
-						colorThread.setEnd(true);
 					}
 					if (getPositionNumber() == 30) {
 						colorThread.setEnd(true);
@@ -124,6 +126,7 @@ public class BluetoothThread extends Thread {
 					if (getPositionNumber() == 40) {
 						colorThread.setEnd(true);
 					}
+					lastPositionOfOtherTrain = signal;
 				}
 				if (signal == 30) { /* anderer Zug wartet an Position 3 */
 					if (getPositionNumber() == 10) {
@@ -138,6 +141,7 @@ public class BluetoothThread extends Thread {
 						setPassed(true);
 						colorThread.setEnd(true);
 					}
+					lastPositionOfOtherTrain = signal;
 				}
 				if (signal == 40) { /* anderer Zug wartet an Position 4 */
 					if (getPositionNumber() == 10) {
@@ -150,6 +154,7 @@ public class BluetoothThread extends Thread {
 						setPassed(true);
 						colorThread.setEnd(true);
 					}
+					lastPositionOfOtherTrain = signal;
 				}
 				
 				LCD.drawInt(getPositionNumber(), 3, 4);
