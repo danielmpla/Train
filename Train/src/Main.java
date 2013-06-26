@@ -68,10 +68,10 @@ public class Main {
 			Motor.C.backward();
 		}
 		while(Button.readButtons() != Button.ID_ESCAPE){
-			if(Button.readButtons() == Button.ID_ENTER){
+			/*if(Button.readButtons() == Button.ID_ENTER){
 				Motor.B.setSpeed(SPEED);
 				Motor.C.setSpeed(SPEED);
-			}
+			}*/
 		}
 		System.exit(0);
 		try {
