@@ -42,60 +42,42 @@ public class ColorThread extends Thread {
 		switch (colorSensorID) {
 		case 1:
 			if (red > 190 && green > 35 && green < 70 && blue > 15 && blue < 40) { // ROT
-				LCD.clear();
-				LCD.drawInt(Color.RED, 6, 6);
+				
 				return Color.RED;
 			}
 			/*
 			 * if(red > 35 && red < 80 && green > 80 && green < 130 && blue >
-			 * 170 && blue < 255){ //BLAU LCD.clear(); LCD.drawInt(Color.BLUE,
-			 * 6, 6); return Color.BLUE; }
+			 * 170 && blue < 255){ //BLAU return Color.BLUE; }
 			 */
 			if (red > 250 && green > 250 && blue < 25) { // GELB
-				LCD.clear();
-				LCD.drawInt(Color.YELLOW, 6, 6);
+				
 				return Color.YELLOW;
 			}
-			LCD.clear();
-			LCD.drawInt(255, 6, 6);
+			
 			return 255;
 		case 2:
 			if (red > 150 && green > 20 && green < 65 && blue < 30) { // ROT
-				LCD.clear();
-				LCD.drawInt(Color.RED, 6, 6);
+				
 				return Color.RED;
 			}
 			if (red > 15 && red < 45 && green > 55 && green < 80 && blue > 150) { // BLAU
-				LCD.clear();
-				LCD.drawInt(Color.BLUE, 6, 6);
+				
 				return Color.BLUE;
 			}
 			if (red > 225 && green > 190 && blue < 25) { // GELB
-				LCD.clear();
-				LCD.drawInt(Color.YELLOW, 6, 6);
 				return Color.YELLOW;
 			}
-			LCD.clear();
-			LCD.drawInt(255, 6, 6);
 			return 255;
 		case 3:
 			if (red > 185 && green > 20 && green < 95 && blue > 0 && blue < 60) { // ROT
-				LCD.clear();
-				LCD.drawInt(Color.RED, 6, 6);
 				return Color.RED;
 			}
 			if (red > 15 && red < 50 && green > 65 && green < 105 && blue > 175) { // BLAU
-				LCD.clear();
-				LCD.drawInt(Color.BLUE, 6, 6);
 				return Color.BLUE;
 			}
 			if (red > 250 && green > 250 && blue < 150) { // GELB
-				LCD.clear();
-				LCD.drawInt(Color.YELLOW, 6, 6);
 				return Color.YELLOW;
 			}
-			LCD.clear();
-			LCD.drawInt(255, 6, 6);
 			return 255;
 		default:
 			return 255;
