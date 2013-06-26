@@ -56,11 +56,11 @@ public class ColorThread extends Thread {
 			
 			return 255;
 		case 2:
-			if (red > 150 && green > 20 && green < 65 && blue < 30) { // ROT
+			if (red > 150 && green > 20 && green < 75 && blue < 45) { // ROT
 				
 				return Color.RED;
 			}
-			if (red > 10 && red < 50 && green > 50 && green < 85 && blue > 150) { // BLAU
+			if (red > 10 && red < 50 && green > 50 && green < 105 && blue > 170) { // BLAU
 				
 				return Color.BLUE;
 			}
@@ -97,7 +97,7 @@ public class ColorThread extends Thread {
 			return !(colorSensor.getColor().getRed() * multiplier < 70
 					&& colorSensor.getColor().getRed() * multiplier > 15
 					&& colorSensor.getColor().getGreen() * multiplier > 55
-					&& colorSensor.getColor().getGreen() * multiplier < 90
+					&& colorSensor.getColor().getGreen() * multiplier < 250
 					&& colorSensor.getColor().getBlue() * multiplier > 20 && colorSensor
 					.getColor().getBlue() * multiplier < 65);
 		case 3:
