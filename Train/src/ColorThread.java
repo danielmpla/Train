@@ -56,26 +56,26 @@ public class ColorThread extends Thread {
 			
 			return 255;
 		case 2:
-			if (red > 150 && green > 20 && green < 75 && blue < 45) { // ROT
+			if (red > 170 && green > 20 && green < 55 && blue < 25) { // ROT
 				
 				return Color.RED;
 			}
-			if (red > 10 && red < 50 && green > 50 && green < 105 && blue > 170) { // BLAU
+			if (red > 10 && red < 70 && green > 55 && green < 110 && blue > 180) { // BLAU
 				
 				return Color.BLUE;
 			}
-			if (red > 225 && green > 190 && blue < 25) { // GELB
+			if (red > 225 && green > 225 && blue < 25) { // GELB
 				return Color.YELLOW;
 			}
 			return 255;
 		case 3:
-			if (red > 235 && green > 20 && green < 95 && blue > 0 && blue < 60) { // ROT
+			if (red > 225 && green > 25 && green < 75 && blue < 36) { // ROT
 				return Color.RED;
 			}
-			if (red > 15 && red < 60 && green > 65 && green < 115 && blue > 200) { // BLAU
+			if (red > 20 && red < 75 && green > 65 && green < 115 && blue > 200) { // BLAU
 				return Color.BLUE;
 			}
-			if (red > 250 && green > 250 && blue < 50) { // GELB
+			if (red > 250 && green > 250 && blue < 25) { // GELB
 				return Color.YELLOW;
 			}
 			return 255;
@@ -94,18 +94,16 @@ public class ColorThread extends Thread {
 					&& colorSensor.getColor().getBlue() * multiplier > 35 && colorSensor
 					.getColor().getBlue() * multiplier < 85);
 		case 2:
-			return !(colorSensor.getColor().getRed() * multiplier < 70
+			return !(colorSensor.getColor().getRed() * multiplier < 80
 					&& colorSensor.getColor().getRed() * multiplier > 15
-					&& colorSensor.getColor().getGreen() * multiplier > 55
-					&& colorSensor.getColor().getGreen() * multiplier < 250
+					&& colorSensor.getColor().getGreen() * multiplier > 65
 					&& colorSensor.getColor().getBlue() * multiplier > 20 && colorSensor
-					.getColor().getBlue() * multiplier < 65);
+					.getColor().getBlue() * multiplier < 85);
 		case 3:
 			return !(colorSensor.getColor().getRed() * multiplier < 115
-					&& colorSensor.getColor().getRed() * multiplier > 30
-					&& colorSensor.getColor().getGreen() * multiplier > 75
-					&& colorSensor.getColor().getGreen() * multiplier < 155
-					&& colorSensor.getColor().getBlue() * multiplier > 40 && colorSensor
+					&& colorSensor.getColor().getRed() * multiplier > 10
+					&& colorSensor.getColor().getGreen() * multiplier > 65
+					&& colorSensor.getColor().getBlue() * multiplier > 20 && colorSensor
 					.getColor().getBlue() * multiplier < 135);
 		default:
 			return false;
@@ -117,7 +115,7 @@ public class ColorThread extends Thread {
 	}
 
 	public void run() {
-		colorSensor.initWhiteBalance();
+		while(colorSensor.initWhiteBalance() == 0){}
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e1) {
