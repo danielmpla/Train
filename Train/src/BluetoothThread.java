@@ -100,47 +100,43 @@ public class BluetoothThread extends Thread {
 				}
 				if (signal == 1) { /* ANDERER ZUG FÄHRT */
 					if (getPositionNumber() == 10) { colorThread.setEnd(false);	}
-					if (getPositionNumber() == 20) { colorThread.setEnd(true); setPositionNumber(0); setPassed(false); }
+					if (getPositionNumber() == 20) { colorThread.setEnd(true); setPassed(false); }
 					if (getPositionNumber() == 30) { colorThread.setEnd(false);	}
-					if (getPositionNumber() == 40) { colorThread.setEnd(true); setPositionNumber(0); setPassed(false); }
+					if (getPositionNumber() == 40) { colorThread.setEnd(true); setPassed(false); }
 
 				}
 				if (signal == 10) { /* Anderer Zug befindet sich an Position 1 */
 					if (getPositionNumber() == 20) { colorThread.setEnd(false); setPassed(true); }
 					if (getPositionNumber() == 30) {
 						if (isHost()) {
-							colorThread.setEnd(true); setPositionNumber(0);
+							colorThread.setEnd(true);
 						} else {
 							colorThread.setEnd(false);	
 						}
 					}
-					if (getPositionNumber() == 40) { colorThread.setEnd(true); setPositionNumber(0); setPassed(true); }
-					
+					if (getPositionNumber() == 40) { colorThread.setEnd(true); setPassed(true); }
 				}
 				if (signal == 20) { /* Anderer Zug befindet sich an Position 2 */
-					if (getPositionNumber() == 10) { colorThread.setEnd(true); setPositionNumber(0); }
-					if (getPositionNumber() == 30) { colorThread.setEnd(true); setPositionNumber(0); }
-					if (getPositionNumber() == 40) { colorThread.setEnd(true); setPositionNumber(0); }
-					
+					if (getPositionNumber() == 10) { colorThread.setEnd(true); }
+					if (getPositionNumber() == 30) { colorThread.setEnd(true); }
+					if (getPositionNumber() == 40) { colorThread.setEnd(true); }
 				}
 				if (signal == 30) { /* Anderer Zug befindet sich an Position 3 */
 					if (getPositionNumber() == 10) {
 						if (isHost()) {
-							colorThread.setEnd(true); setPositionNumber(0);
+							colorThread.setEnd(true);
 						} else {
 							colorThread.setEnd(false);	
 						}
-						
 					}
-					if (getPositionNumber() == 20) { colorThread.setEnd(true); setPositionNumber(0); }
+					if (getPositionNumber() == 20) { colorThread.setEnd(true); }
 					if (getPositionNumber() == 40) { colorThread.setEnd(false); setPassed(true); }
 					
 				}
 				if (signal == 40) { /* Anderer Zug befindet sich an Position 4 */
 					if (getPositionNumber() == 10) { colorThread.setEnd(false); }
-					if (getPositionNumber() == 20) { colorThread.setEnd(true); setPositionNumber(0); }
-					if (getPositionNumber() == 30) { colorThread.setEnd(true); setPositionNumber(0); }
-					
+					if (getPositionNumber() == 20) { colorThread.setEnd(true); }
+					if (getPositionNumber() == 30) { colorThread.setEnd(true); }
 				}
 
 				LCD.drawInt(getPositionNumber(), 3, 4);
