@@ -70,6 +70,7 @@ public class BluetoothThread extends Thread {
 		LCD.clear();
 		LCD.drawString("success :)", 3, 3);
 	}
+
 	private void waitForConnection() {
 		LCD.drawString("waiting...", 3, 3);
 
@@ -93,39 +94,33 @@ public class BluetoothThread extends Thread {
 		try {
 			if (getInputStream().available() > 0) {
 				int signal = getInputStream().read();
-				
-				if (signal == 0) { /* anderer Zug fährt vorbei */
+
+				if (signal == 0) { /* FAHR WEITER */
 					colorThread.setEnd(true);
 				}
-				if (signal == 1) {
-					if(lastPositionOfOtherTrain != getPositionNumber()) {
-						colorThread.setEnd(true);
-					}
+				if (signal == 1) { /* ANDERER ZUG FÄHRT */
+					if (getPositionNumber() == 10) { 	}
+					if (getPositionNumber() == 20) { colorThread.setEnd(true); }
+					if (getPositionNumber() == 30) {	}
+					if (getPositionNumber() == 40) { colorThread.setEnd(true); }
+
 				}
-				if (signal == 10) { /* anderer Zug wartet an Position 1 */
-					if (getPositionNumber() == 20) {
-						setPassed(true);
-					}
+				if (signal == 10) { /* Anderer Zug befindet sich an Position 1 */
+					if (getPositionNumber() == 10) {		}
+					if (getPositionNumber() == 20) { setPassed(true); }
 					if (getPositionNumber() == 30) {
-						if(isHost()) {
+						if (isHost()) {
 							colorThread.setEnd(true);
 						}
 					}
-					if (getPositionNumber() == 40) {
-						colorThread.setEnd(true);
-					}
+					if (getPositionNumber() == 40) { setPassed(true); }
+					
 					lastPositionOfOtherTrain = signal;
 				}
 				if (signal == 20) { /* anderer Zug wartet an Position 2 */
-					if (getPositionNumber() == 10) {
-						setPassed(true);
-					}
-					if (getPositionNumber() == 30) {
-						colorThread.setEnd(true);
-					}
-					if (getPositionNumber() == 40) {
-						colorThread.setEnd(true);
-					}
+					if (getPositionNumber() == 10) {	}
+					if (getPositionNumber() == 30) { colorThread.setEnd(true); }
+					if (getPositionNumber() == 40) { colorThread.setEnd(true); }
 					lastPositionOfOtherTrain = signal;
 				}
 				if (signal == 30) { /* anderer Zug wartet an Position 3 */
@@ -134,29 +129,17 @@ public class BluetoothThread extends Thread {
 							colorThread.setEnd(true);
 						}
 					}
-					if (getPositionNumber() == 20) {
-						colorThread.setEnd(true);
-					}
-					if (getPositionNumber() == 40) {
-						setPassed(true);
-						colorThread.setEnd(true);
-					}
+					if (getPositionNumber() == 20) { colorThread.setEnd(true); }
+					if (getPositionNumber() == 40) {	}
 					lastPositionOfOtherTrain = signal;
 				}
 				if (signal == 40) { /* anderer Zug wartet an Position 4 */
-					if (getPositionNumber() == 10) {
-						colorThread.setEnd(true);
-					}
-					if (getPositionNumber() == 20) {
-						colorThread.setEnd(true);
-					}
-					if (getPositionNumber() == 30) {
-						setPassed(true);
-						colorThread.setEnd(true);
-					}
+					if (getPositionNumber() == 10) {	}
+					if (getPositionNumber() == 20) {	}
+					if (getPositionNumber() == 30) { setPassed(true); }
 					lastPositionOfOtherTrain = signal;
 				}
-				
+
 				LCD.drawInt(getPositionNumber(), 3, 4);
 				LCD.drawInt(signal, 3, 5);
 			}
@@ -184,7 +167,7 @@ public class BluetoothThread extends Thread {
 				getOutputStream().write(1);
 				getOutputStream().flush();
 			}
-			
+
 		} catch (IOException e) {
 			LCD.clear();
 			LCD.drawString("Talking Error", 3, 3);
@@ -208,7 +191,6 @@ public class BluetoothThread extends Thread {
 
 	/*
 	 * --------------------------------------------------------------------------
-	 * 
 	 */
 
 	private InputStream getInputStream() {
