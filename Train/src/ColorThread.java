@@ -139,7 +139,7 @@ public class ColorThread extends Thread {
 				LCD.drawString("ROT", 1, 2);
 				// waitOnColor.wait(Main.RED, true, 600);
 				Motor.B.stop(true);
-				Motor.C.stop(true);
+				Motor.C.stop(false);
 				color = colorSensor.getColor();
 				if(getColorID(color.getRed(), color.getGreen(), color.getBlue()) != Color.RED){
 					Motor.B.setSpeed(100);
@@ -175,8 +175,27 @@ public class ColorThread extends Thread {
 			case Color.BLUE:
 				LCD.clear();
 				LCD.drawString("BLAU", 1, 2);
-				Motor.B.stop();
-				Motor.C.stop();
+				Motor.B.stop(true);
+				Motor.C.stop(false);
+				color = colorSensor.getColor();
+				if(getColorID(color.getRed(), color.getGreen(), color.getBlue()) == Color.BLUE){
+					Motor.B.setSpeed(100);
+					Motor.C.setSpeed(100);
+					if (direction == -1) {
+						Motor.B.backward();
+						Motor.C.backward();
+					} else {
+						Motor.B.forward();
+						Motor.C.forward();
+					}
+					while((getColorID(color.getRed(), color.getGreen(), color.getBlue())) == Color.BLUE){
+						color = colorSensor.getColor();
+					}
+					Motor.B.stop(true);
+					Motor.C.stop(true);
+					Motor.B.setSpeed(Main.SPEED);
+					Motor.C.setSpeed(Main.SPEED);
+				}
 				bluetooth.setWaiting(true);
 				if (direction == 1) {
 					if (isBehindCross) {
