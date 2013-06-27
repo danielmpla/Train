@@ -99,21 +99,21 @@ public class BluetoothThread extends Thread {
 					colorThread.setEnd(true);
 				}
 				if (signal == 1) { /* ANDERER ZUG FÄHRT */
-					if (getPositionNumber() == 10) { 	}
+					if (getPositionNumber() == 10) { colorThread.setEnd(false);	}
 					if (getPositionNumber() == 20) { colorThread.setEnd(true); setPassed(false); }
-					if (getPositionNumber() == 30) { 	}
+					if (getPositionNumber() == 30) { colorThread.setEnd(false);	}
 					if (getPositionNumber() == 40) { colorThread.setEnd(true); setPassed(false); }
 
 				}
 				if (signal == 10) { /* Anderer Zug befindet sich an Position 1 */
 					if (getPositionNumber() == 10) {		}
-					if (getPositionNumber() == 20) { setPassed(true); }
+					if (getPositionNumber() == 20) { colorThread.setEnd(false); setPassed(true); }
 					if (getPositionNumber() == 30) {
 						if (isHost()) {
 							colorThread.setEnd(true);
 						}
 					}
-					if (getPositionNumber() == 40) { setPassed(true); }
+					if (getPositionNumber() == 40) { colorThread.setEnd(true); setPassed(true); }
 					
 					lastPositionOfOtherTrain = signal;
 				}
@@ -130,7 +130,7 @@ public class BluetoothThread extends Thread {
 						}
 					}
 					if (getPositionNumber() == 20) { colorThread.setEnd(true); }
-					if (getPositionNumber() == 40) { setPassed(true); }
+					if (getPositionNumber() == 40) { colorThread.setEnd(false); setPassed(true); }
 					lastPositionOfOtherTrain = signal;
 				}
 				if (signal == 40) { /* anderer Zug wartet an Position 4 */

@@ -190,7 +190,7 @@ public class ColorThread extends Thread {
 						color = colorSensor.getColor();
 					}
 					Motor.B.stop(true);
-					Motor.C.stop(true);
+					Motor.C.stop(false);
 					Motor.B.setSpeed(Main.SPEED);
 					Motor.C.setSpeed(Main.SPEED);
 				}
