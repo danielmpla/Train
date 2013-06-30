@@ -212,7 +212,7 @@ public class ColorThread extends Thread {
 						LCD.drawString("Signal 30", 5, 1);
 					}
 				}
-
+				end = false;
 				while (!end) {
 				}
 				if (direction == -1) {
