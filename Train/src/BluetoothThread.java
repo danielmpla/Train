@@ -67,7 +67,7 @@ public class BluetoothThread extends Thread {
 
 		setOutputStream(link.openDataOutputStream());
 		setInputStream(link.openDataInputStream());
-		getInputStream().mark(20);
+		getInputStream().mark(5);
 
 		LCD.clear();
 		LCD.drawString("success :)", 3, 3);
@@ -87,7 +87,7 @@ public class BluetoothThread extends Thread {
 
 		setOutputStream(link.openDataOutputStream());
 		setInputStream(link.openDataInputStream());
-		getInputStream().mark(20);
+		getInputStream().mark(5);
 
 		LCD.clear();
 		LCD.drawString("success :)", 3, 3);
