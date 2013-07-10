@@ -24,20 +24,16 @@ public class BluetoothThread extends Thread {
 	private ColorThread colorThread;
 
 	private boolean host;
-	private boolean waiting;
-	private boolean gotAcknowledge;
-	private boolean gotSignal;
-	private int positionNumber; // 4 verschiedene Haltepunkte
 	private boolean passed;
+	private boolean waiting;
+	private int positionNumber; // 4 verschiedene Haltepunkte
 
 	public BluetoothThread(boolean isHost, ColorThread colorThread) {
-		LCD.clear();
 		setHost(isHost);
 		setColorThread(colorThread);
-		setWaiting(false);
+		
 		setPassed(false);
-		setAcknowledge(true);
-		gotSignal = false;
+		setWaiting(false);
 
 		if (isHost()) {
 			connectToOtherBrick();
@@ -47,6 +43,7 @@ public class BluetoothThread extends Thread {
 	}
 
 	private void connectToOtherBrick() {
+		LCD.clear();
 		LCD.drawString("connecting...", 3, 3);
 
 		brickConnector = Bluetooth.getKnownDevice("NXT4");
@@ -74,6 +71,7 @@ public class BluetoothThread extends Thread {
 		LCD.drawString("success :)", 3, 3);
 	}
 	private void waitForConnection() {
+		LCD.clear();
 		LCD.drawString("waiting...", 3, 3);
 
 		link = Bluetooth.waitForConnection(15000, NXTConnection.PACKET);
@@ -99,17 +97,12 @@ public class BluetoothThread extends Thread {
 
 				if (signal == 0) { /* FAHR WEITER */
 					colorThread.setEnd(true);
-					gotSignal = true;
 				}
 				if (signal == 1) { /* ANDERER ZUG FÄHRT */
 					if (getPositionNumber() == 10) { colorThread.setEnd(false);	}
 					if (getPositionNumber() == 20) { colorThread.setEnd(true); setPassed(false); }
 					if (getPositionNumber() == 30) { colorThread.setEnd(false);	}
 					if (getPositionNumber() == 40) { colorThread.setEnd(true); setPassed(false); }
-					gotSignal = true;
-				}
-				if (signal == 2) { // ANDERER ZUG HAT SIGNAL ERHALTEN UND BESTÄTIGUNG GESENDET
-					setAcknowledge(true);
 				}
 				if (signal == 10) { /* Anderer Zug befindet sich an Position 1 */
 					if (getPositionNumber() == 10) { colorThread.setEnd(false); }
@@ -122,14 +115,12 @@ public class BluetoothThread extends Thread {
 						}
 					}
 					if (getPositionNumber() == 40) { colorThread.setEnd(true); setPassed(true); }
-					gotSignal = true;
 				}
 				if (signal == 20) { /* Anderer Zug befindet sich an Position 2 */
 					if (getPositionNumber() == 10) { colorThread.setEnd(true); }
 					if (getPositionNumber() == 20) { colorThread.setEnd(false); }
 					if (getPositionNumber() == 30) { colorThread.setEnd(true); }
 					if (getPositionNumber() == 40) { colorThread.setEnd(true); }
-					gotSignal = true;
 				}
 				if (signal == 30) { /* Anderer Zug befindet sich an Position 3 */
 					if (getPositionNumber() == 10) {
@@ -142,14 +133,12 @@ public class BluetoothThread extends Thread {
 					if (getPositionNumber() == 20) { colorThread.setEnd(true); }
 					if (getPositionNumber() == 30) { colorThread.setEnd(false); }
 					if (getPositionNumber() == 40) { colorThread.setEnd(false); setPassed(true); }
-					gotSignal = true;
 				}
 				if (signal == 40) { /* Anderer Zug befindet sich an Position 4 */
 					if (getPositionNumber() == 10) { colorThread.setEnd(false); }
 					if (getPositionNumber() == 20) { colorThread.setEnd(true); }
 					if (getPositionNumber() == 30) { colorThread.setEnd(true); }
 					if (getPositionNumber() == 40) { colorThread.setEnd(false); }
-					gotSignal = true;
 				}
 			}
 		} catch (IOException e) {
@@ -161,15 +150,6 @@ public class BluetoothThread extends Thread {
 	}
 
 	private void talkToOtherBrick() {
-		if (gotAcknowledge == true) {
-			sendControlSignal();
-		}
-		if (gotSignal == true) {
-			sendAcknowledge();
-		}
-	}
-	
-	private void sendControlSignal() {
 		try {
 			if (hasPassed()) {
 				getOutputStream().write(0);
@@ -179,41 +159,23 @@ public class BluetoothThread extends Thread {
 				getOutputStream().write(1);
 			}
 			getOutputStream().flush();
-			setAcknowledge(false);
 
 		} catch (IOException e) {
 			LCD.clear();
 			LCD.drawString("control signal error", 3, 3);
 			Button.waitForAnyPress();
 			System.exit(1);
-		}
-	}
-	private void sendAcknowledge() {
-		try {
-			if (gotSignal) {
-				getOutputStream().write(2);
-				gotSignal = false;
-			}
-		} catch (IOException e) {
-			LCD.clear();
-			LCD.drawString("acknowledge error", 3, 3);
-			Button.waitForAnyPress();
-			System.exit(1);
-		}
+		}	
 	}
 
 	@Override
 	public void run() {
 		while (Button.readButtons() != Button.ID_ESCAPE) {
-			Long time = System.currentTimeMillis();
-			
-			// Wartet 0,5s auf ein Acknowledge, sonst sendet er das Signal erneut
-			while (System.currentTimeMillis() >= time + 500) {
-				if (gotAcknowledge == false) {
-					listenToOtherBrick();
-				}
-			}
+			listenToOtherBrick();
 			talkToOtherBrick();
+			try {
+				Thread.sleep(300);
+			} catch (InterruptedException e) {}
 		}
 
 		LCD.clear();
@@ -258,10 +220,6 @@ public class BluetoothThread extends Thread {
 
 	public void setWaiting(boolean waiting) {
 		this.waiting = waiting;
-	}
-	
-	private void setAcknowledge(boolean acknowledge) {
-		gotAcknowledge = acknowledge;
 	}
 
 	public void setPositionNumber(int positionNumber) {
