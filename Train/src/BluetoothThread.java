@@ -118,6 +118,8 @@ public class BluetoothThread extends Thread {
 							colorThread.setEnd(false);
 						}
 					}
+					LCD.clear();
+					LCD.drawInt(getPositionNumberOfOtherTrain(), 3, 3);
 				}
 				if (signal == 10) { /* Anderer Zug befindet sich an Position 1 */
 					if (getPositionNumber() == 20) { colorThread.setEnd(false); setPassed(true); }
@@ -129,13 +131,13 @@ public class BluetoothThread extends Thread {
 						}
 					}
 					if (getPositionNumber() == 40) { colorThread.setEnd(true); setPassed(true); }
-					setPositionNumberOfOtherTrain(10);
+					setPositionNumberOfOtherTrain(signal);
 				}
 				if (signal == 20) { /* Anderer Zug befindet sich an Position 2 */
 					if (getPositionNumber() == 10) { colorThread.setEnd(true); }
 					if (getPositionNumber() == 30) { colorThread.setEnd(true); }
 					if (getPositionNumber() == 40) { colorThread.setEnd(true); }
-					setPositionNumberOfOtherTrain(20);
+					setPositionNumberOfOtherTrain(signal);
 				}
 				if (signal == 30) { /* Anderer Zug befindet sich an Position 3 */
 					if (getPositionNumber() == 10) {
@@ -147,13 +149,13 @@ public class BluetoothThread extends Thread {
 					}
 					if (getPositionNumber() == 20) { colorThread.setEnd(true); }
 					if (getPositionNumber() == 40) { colorThread.setEnd(false); setPassed(true); }
-					setPositionNumberOfOtherTrain(30);
+					setPositionNumberOfOtherTrain(signal);
 				}
 				if (signal == 40) { /* Anderer Zug befindet sich an Position 4 */
 					if (getPositionNumber() == 10) { colorThread.setEnd(false); }
 					if (getPositionNumber() == 20) { colorThread.setEnd(true); }
 					if (getPositionNumber() == 30) { colorThread.setEnd(true); }
-					setPositionNumberOfOtherTrain(40);
+					setPositionNumberOfOtherTrain(signal);
 				}
 			}
 		} catch (IOException e) {
@@ -177,7 +179,7 @@ public class BluetoothThread extends Thread {
 
 		} catch (IOException e) {
 			LCD.clear();
-			LCD.drawString("control signal error", 3, 3);
+			LCD.drawString("signal error", 3, 3);
 			Button.waitForAnyPress();
 			System.exit(1);
 		}	
