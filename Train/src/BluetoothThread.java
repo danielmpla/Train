@@ -102,7 +102,9 @@ public class BluetoothThread extends Thread {
 				if (signal == 1) { /* ANDERER ZUG FÄHRT */
 					if (getPositionNumber() == 10) { colorThread.setEnd(false);	}
 					if (getPositionNumber() == 20) {
-						if (getPositionNumberOfOtherTrain() != 20) {
+						if (getPositionNumberOfOtherTrain() == 20) {
+							colorThread.setEnd(false);
+						} else {
 							colorThread.setEnd(true);
 							setPassed(false);
 						}
@@ -112,11 +114,12 @@ public class BluetoothThread extends Thread {
 						if (getPositionNumberOfOtherTrain() != 40) {
 							colorThread.setEnd(true);
 							setPassed(false);
+						} else {
+							colorThread.setEnd(false);
 						}
 					}
 				}
 				if (signal == 10) { /* Anderer Zug befindet sich an Position 1 */
-					if (getPositionNumber() == 10) { colorThread.setEnd(false); }
 					if (getPositionNumber() == 20) { colorThread.setEnd(false); setPassed(true); }
 					if (getPositionNumber() == 30) {
 						if (isHost()) {
@@ -130,7 +133,6 @@ public class BluetoothThread extends Thread {
 				}
 				if (signal == 20) { /* Anderer Zug befindet sich an Position 2 */
 					if (getPositionNumber() == 10) { colorThread.setEnd(true); }
-					if (getPositionNumber() == 20) { colorThread.setEnd(false); }
 					if (getPositionNumber() == 30) { colorThread.setEnd(true); }
 					if (getPositionNumber() == 40) { colorThread.setEnd(true); }
 					setPositionNumberOfOtherTrain(20);
@@ -144,7 +146,6 @@ public class BluetoothThread extends Thread {
 						}
 					}
 					if (getPositionNumber() == 20) { colorThread.setEnd(true); }
-					if (getPositionNumber() == 30) { colorThread.setEnd(false); }
 					if (getPositionNumber() == 40) { colorThread.setEnd(false); setPassed(true); }
 					setPositionNumberOfOtherTrain(30);
 				}
@@ -152,7 +153,6 @@ public class BluetoothThread extends Thread {
 					if (getPositionNumber() == 10) { colorThread.setEnd(false); }
 					if (getPositionNumber() == 20) { colorThread.setEnd(true); }
 					if (getPositionNumber() == 30) { colorThread.setEnd(true); }
-					if (getPositionNumber() == 40) { colorThread.setEnd(false); }
 					setPositionNumberOfOtherTrain(40);
 				}
 			}
