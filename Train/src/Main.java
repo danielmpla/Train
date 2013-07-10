@@ -56,7 +56,7 @@ public class Main {
 		colorThread.setDaemon(true);
 		boolean isHost = colorSensorID == 2;
 		if (!isBigTrain) {
-		bluetoothThread = new BluetoothThread(isHost, colorThread);
+			bluetoothThread = new BluetoothThread(isHost, colorThread);
 			bluetoothThread.setDaemon(true);
 			bluetoothThread.start();
 		}

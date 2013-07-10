@@ -170,7 +170,8 @@ public class BluetoothThread extends Thread {
 		try {
 			if (hasPassed()) {
 				getOutputStream().write(0);
-			} else if (isWaiting()) {
+			}
+			if (isWaiting()) {
 				getOutputStream().write(getPositionNumber());
 			} else {
 				getOutputStream().write(1);
