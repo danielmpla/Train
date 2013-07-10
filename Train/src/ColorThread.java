@@ -41,7 +41,7 @@ public class ColorThread extends Thread {
 		
 		switch (colorSensorID) {
 		case 1:
-			if (red > 190 && green > 35 && green < 70 && blue > 15 && blue < 40) { // ROT
+			if (red > 185 && green > 25 && green < 110 && blue > 5 && blue < 75) { // ROT
 				
 				return Color.RED;
 			}
@@ -49,7 +49,7 @@ public class ColorThread extends Thread {
 			 * if(red > 35 && red < 80 && green > 80 && green < 130 && blue >
 			 * 170 && blue < 255){ //BLAU return Color.BLUE; }
 			 */
-			if (red > 250 && green > 250 && blue < 25) { // GELB
+			if (red > 250 && green > 250 && blue < 45) { // GELB
 				
 				return Color.YELLOW;
 			}
@@ -87,12 +87,12 @@ public class ColorThread extends Thread {
 	public boolean notGreen() {
 		switch (colorSensorID) {
 		case 1:
-			return !(colorSensor.getColor().getRed() * multiplier < 80
-					&& colorSensor.getColor().getRed() * multiplier > 25
+			return !(colorSensor.getColor().getRed() * multiplier < 110
+					&& colorSensor.getColor().getRed() * multiplier > 10
 					&& colorSensor.getColor().getGreen() * multiplier > 55
-					&& colorSensor.getColor().getGreen() * multiplier < 135
+					&& colorSensor.getColor().getGreen() * multiplier < 170
 					&& colorSensor.getColor().getBlue() * multiplier > 35 && colorSensor
-					.getColor().getBlue() * multiplier < 85);
+					.getColor().getBlue() * multiplier < 110);
 		case 2:
 			return !(colorSensor.getColor().getRed() * multiplier < 80
 					&& colorSensor.getColor().getRed() * multiplier > 15
@@ -189,6 +189,12 @@ public class ColorThread extends Thread {
 					while((getColorID(color.getRed(), color.getGreen(), color.getBlue())) == Color.BLUE){
 						color = colorSensor.getColor();
 					}
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					Motor.B.stop(true);
 					Motor.C.stop(false);
 					Motor.B.setSpeed(Main.SPEED);
@@ -214,6 +220,12 @@ public class ColorThread extends Thread {
 				}
 				end = false;
 				while (!end) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				if (direction == -1) {
 					Motor.B.backward();
