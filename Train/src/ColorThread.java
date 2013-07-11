@@ -1,5 +1,3 @@
-import java.util.BitSet;
-
 import lejos.nxt.LCD;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
