@@ -178,7 +178,7 @@ public class BluetoothThread extends Thread {
 			if (getPositionNumber() == 1) { }
 			if (getPositionNumber() == 2) { }
 			if (getPositionNumber() == 3) { }
-			if (getPositionNumber() == 10) { colorThread.setSignalGo(true); setPositionNumber(1); }
+			if (getPositionNumber() == 10) { colorThread.setSignalGo(true); setPositionNumber(2); }
 			if (getPositionNumber() == 30) { colorThread.setSignalGo(true);	setPositionNumber(2); }
 			if (getPositionNumber() == 40) { colorThread.setSignalGo(true); setPositionNumber(3); }
 			setPositionNumberOfOtherTrain(givenSignal);
