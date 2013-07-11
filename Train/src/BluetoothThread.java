@@ -111,6 +111,7 @@ public class BluetoothThread extends Thread {
 		try {
 			if (getInputStream().available() > 0) {
 				int signal = getInputStream().read();
+				setInputStream(link.openInputStream());
 				identify(signal);
 			}
 		} catch (IOException e) {
