@@ -8,7 +8,8 @@ import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
 
-/** Cares about the communication between the NXT-Bricks.
+/**
+ * Cares about the communication between the NXT-Bricks.
  * 
  * @author Christopher Voigt
  * */
@@ -24,8 +25,11 @@ public class BluetoothThread extends Thread {
 	private boolean host;
 	private boolean passed;
 	private boolean waiting;
+	private boolean acknowledgeToSend;
+	private boolean signalTransmitted;
 	private int positionNumber; // there are four different waiting points
 	private int positionNumberOfOtherTrain;
+	private long currentTime;
 
 	public BluetoothThread(boolean isHost, ColorThread colorThread) {
 		LCD.clear();
@@ -61,7 +65,8 @@ public class BluetoothThread extends Thread {
 	/**
 	 * Active method which connects to another NXT-Brick.
 	 * 
-	 * @param String nxtName
+	 * @param String
+	 *            nxtName
 	 * */
 	private void connectToOtherBrick(String nxtName) {
 		LCD.drawString("connecting...", 3, 3);
@@ -128,6 +133,7 @@ public class BluetoothThread extends Thread {
 	private void identify(int givenSignal) throws IOException {
 		if (givenSignal == 0) { /* FAHR WEITER */
 			colorThread.setSignalGo(true);
+			setAcknowledgeToSend(true);
 		}
 		if (givenSignal == 1) { /* ANDERER ZUG FÄHRT */
 			if (getPositionNumber() == 10) {
@@ -152,6 +158,7 @@ public class BluetoothThread extends Thread {
 					colorThread.setSignalGo(false);
 				}
 			}
+			setAcknowledgeToSend(true);
 		}
 		if (givenSignal == 10) { /* Anderer Zug befindet sich an Position 1 */
 			if (getPositionNumber() == 20) {
@@ -170,6 +177,7 @@ public class BluetoothThread extends Thread {
 				setPassed(true);
 			}
 			setPositionNumberOfOtherTrain(givenSignal);
+			setAcknowledgeToSend(true);
 		}
 		if (givenSignal == 20) { /* Anderer Zug befindet sich an Position 2 */
 			if (getPositionNumber() == 10) {
@@ -182,6 +190,7 @@ public class BluetoothThread extends Thread {
 				colorThread.setSignalGo(true);
 			}
 			setPositionNumberOfOtherTrain(givenSignal);
+			setAcknowledgeToSend(true);
 		}
 		if (givenSignal == 30) { /* Anderer Zug befindet sich an Position 3 */
 			if (getPositionNumber() == 10) {
@@ -199,6 +208,7 @@ public class BluetoothThread extends Thread {
 				setPassed(true);
 			}
 			setPositionNumberOfOtherTrain(givenSignal);
+			setAcknowledgeToSend(true);
 		}
 		if (givenSignal == 40) { /* Anderer Zug befindet sich an Position 4 */
 			if (getPositionNumber() == 10) {
@@ -211,6 +221,10 @@ public class BluetoothThread extends Thread {
 				colorThread.setSignalGo(true);
 			}
 			setPositionNumberOfOtherTrain(givenSignal);
+			setAcknowledgeToSend(true);
+		}
+		if (givenSignal == 666) {
+			setSignalTransmitted(true);
 		}
 	}
 
@@ -219,6 +233,9 @@ public class BluetoothThread extends Thread {
 	 * 
 	 * */
 	private void talkToOtherBrick() {
+		if (gotASignal()) {
+			sendAcknowledge();
+		}
 		if (hasPassed()) {
 			sendSignal(0);
 		}
@@ -229,30 +246,49 @@ public class BluetoothThread extends Thread {
 		}
 	}
 
-	/** Sends all the necessary signals to the other NXT-Brick.
+	/**
+	 * Sends all the necessary signals to the other NXT-Brick.
 	 * 
 	 * @param int sendingSignal
 	 * */
 	private void sendSignal(int sendingSignal) {
+		if (currentTime + 500 < System.currentTimeMillis() || isSignalTransmitted() ) {
+			try {
+				getOutputStream().write(sendingSignal);
+				getOutputStream().flush();
+				setSignalTransmitted(false);
+			} catch (IOException e) {
+				LCD.clear();
+				LCD.drawString("signal error", 2, 3);
+			}
+		}
+	}
+
+	/**
+	 * Sends the acknowledge if there was a signal from the other NXT-Brick.
+	 * 
+	 * */
+	private void sendAcknowledge() {
 		try {
-			getOutputStream().write(sendingSignal);
+			getOutputStream().write(666);
 			getOutputStream().flush();
+			setAcknowledgeToSend(false);
 		} catch (IOException e) {
 			LCD.clear();
-			LCD.drawString("signal error", 2, 3);
+			LCD.drawString("acknowledge error", 2, 3);
 		}
 	}
 
 	@Override
 	public void run() {
 		while (Button.readButtons() != Button.ID_ESCAPE) {
-			listenToOtherBrick();
-			talkToOtherBrick();
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
+			currentTime = System.currentTimeMillis();
+
+			while (currentTime + 500 > System.currentTimeMillis() || gotASignal() == false || isSignalTransmitted() == false) {
+				listenToOtherBrick();
 			}
 		}
+		talkToOtherBrick();
 	}
 
 	/* ------------------------Getter & SETTER --------------------------- */
@@ -291,6 +327,22 @@ public class BluetoothThread extends Thread {
 
 	public void setWaiting(boolean waiting) {
 		this.waiting = waiting;
+	}
+
+	private boolean gotASignal() {
+		return acknowledgeToSend;
+	}
+
+	private void setAcknowledgeToSend(boolean acknowledge) {
+		this.acknowledgeToSend = acknowledge;
+	}
+
+	private boolean isSignalTransmitted() {
+		return signalTransmitted;
+	}
+
+	private void setSignalTransmitted(boolean transmitted) {
+		this.signalTransmitted = transmitted;
 	}
 
 	public void setPositionNumber(int positionNumber) {
