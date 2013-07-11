@@ -27,6 +27,7 @@ public class BluetoothThread extends Thread {
 	private boolean waiting;
 	private boolean acknowledgeToSend;
 	private boolean signalTransmitted;
+	private boolean needToSend;
 	private int positionNumber; // there are four different waiting points
 	private int positionNumberOfOtherTrain;
 	private long currentTime;
@@ -225,6 +226,7 @@ public class BluetoothThread extends Thread {
 		}
 		if (givenSignal == 666) {
 			setSignalTransmitted(true);
+			setNeedToSend(false);
 		}
 	}
 
@@ -233,17 +235,14 @@ public class BluetoothThread extends Thread {
 	 * 
 	 * */
 	private void talkToOtherBrick() {
-		if (gotASignal()) {
-			sendAcknowledge();
-		}
 		if (hasPassed()) {
 			sendSignal(0);
 		}
 		if (isWaiting()) {
 			sendSignal(getPositionNumber());
-		} else {
+		} else if (((System.currentTimeMillis() / 1000) % 5) == 0) {
 			sendSignal(1);
-		}
+		} else {}
 	}
 
 	/**
@@ -252,15 +251,12 @@ public class BluetoothThread extends Thread {
 	 * @param int sendingSignal
 	 * */
 	private void sendSignal(int sendingSignal) {
-		if (currentTime + 500 < System.currentTimeMillis() || isSignalTransmitted() ) {
-			try {
-				getOutputStream().write(sendingSignal);
-				getOutputStream().flush();
-				setSignalTransmitted(false);
-			} catch (IOException e) {
-				LCD.clear();
-				LCD.drawString("signal error", 2, 3);
-			}
+		try {
+			getOutputStream().write(sendingSignal);
+			getOutputStream().flush();
+		} catch (IOException e) {
+			LCD.clear();
+			LCD.drawString("signal error", 2, 3);
 		}
 	}
 
@@ -282,13 +278,23 @@ public class BluetoothThread extends Thread {
 	@Override
 	public void run() {
 		while (Button.readButtons() != Button.ID_ESCAPE) {
+
 			currentTime = System.currentTimeMillis();
 
-			while (currentTime + 500 > System.currentTimeMillis() || gotASignal() == false || isSignalTransmitted() == false) {
+			while (currentTime + 500 > System.currentTimeMillis()) {
 				listenToOtherBrick();
+				if (haveAnAcknowledgeToSend() == true) {
+					sendAcknowledge();
+				}
+				if (isSignalTransmitted() == true) {
+					break;
+				}
+			}
+
+			if (isNeedToSend() == true) {
+				talkToOtherBrick();
 			}
 		}
-		talkToOtherBrick();
 	}
 
 	/* ------------------------Getter & SETTER --------------------------- */
@@ -327,22 +333,33 @@ public class BluetoothThread extends Thread {
 
 	public void setWaiting(boolean waiting) {
 		this.waiting = waiting;
+		if (waiting == true) {
+			this.needToSend = true;
+		}
 	}
 
-	private boolean gotASignal() {
+	private boolean haveAnAcknowledgeToSend() {
 		return acknowledgeToSend;
 	}
 
 	private void setAcknowledgeToSend(boolean acknowledge) {
 		this.acknowledgeToSend = acknowledge;
 	}
-
+	
 	private boolean isSignalTransmitted() {
 		return signalTransmitted;
 	}
+	
+	private void setSignalTransmitted(boolean signalTransmitted) {
+		this.signalTransmitted = signalTransmitted;
+	}
 
-	private void setSignalTransmitted(boolean transmitted) {
-		this.signalTransmitted = transmitted;
+	private boolean isNeedToSend() {
+		return needToSend;
+	}
+
+	private void setNeedToSend(boolean needToSend) {
+		this.needToSend = needToSend;
 	}
 
 	public void setPositionNumber(int positionNumber) {
@@ -367,5 +384,8 @@ public class BluetoothThread extends Thread {
 
 	public void setPassed(boolean passed) {
 		this.passed = passed;
+		if (passed == true) {
+			this.needToSend = true;
+		}
 	}
 }
