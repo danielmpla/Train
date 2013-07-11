@@ -130,66 +130,81 @@ public class BluetoothThread extends Thread {
 	 * @param int givenSignal
 	 * */
 	private void identify(int givenSignal) throws IOException {
-		if (givenSignal == 1) { /* ANDERER ZUG FÄHRT */
-			if (getPositionNumber() == 10) { colorThread.setSignalGo(false); }
-			if (getPositionNumber() == 20) {
-				if (getPositionNumberOfOtherTrain() == 20) {
-					colorThread.setSignalGo(false);
-				} else {
-					colorThread.setSignalGo(true);
-					setPositionNumber(1); 
-				}
-			}
+		if (givenSignal == 1) { /* Anderer Zug befindet sich im Großhandelsbereich */
+			if (getPositionNumber() == 2) { }
+			if (getPositionNumber() == 3) { }
+			if (getPositionNumber() == 10) { colorThread.setSignalGo(true); setPositionNumber(2); }
+			if (getPositionNumber() == 20) { colorThread.setSignalGo(false); }
 			if (getPositionNumber() == 30) { colorThread.setSignalGo(false); }
-			if (getPositionNumber() == 40) {
-				if (getPositionNumberOfOtherTrain() != 40) {
-					colorThread.setSignalGo(true);
-					setPositionNumber(1); 
-				} else {
-					colorThread.setSignalGo(false);
-				}
-			}
+			if (getPositionNumber() == 40) { colorThread.setSignalGo(true);	setPositionNumber(3); }
+			setAcknowledgeToSend(true);
+		}
+		if (givenSignal == 2) { /* Anderer Zug befindet sich im Kreuzungsbereich */
+			if (getPositionNumber() == 1) { }
+			if (getPositionNumber() == 3) { }
+			if (getPositionNumber() == 10) { colorThread.setSignalGo(false); }
+			if (getPositionNumber() == 20) { colorThread.setSignalGo(true); setPositionNumber(1); }
+			if (getPositionNumber() == 30) { colorThread.setSignalGo(false); } 
+			if (getPositionNumber() == 40) { colorThread.setSignalGo(true);	setPositionNumber(3); }
+			setAcknowledgeToSend(true);
+		}
+		if (givenSignal == 3) { /* Anderer Zug befindet sich im Kundenbereich */
+			if (getPositionNumber() == 1) { }
+			if (getPositionNumber() == 2) { }
+			if (getPositionNumber() == 10) { colorThread.setSignalGo(true); setPositionNumber(2); }
+			if (getPositionNumber() == 20) { colorThread.setSignalGo(true); setPositionNumber(1); }
+			if (getPositionNumber() == 30) { colorThread.setSignalGo(true); setPositionNumber(2); }
+			if (getPositionNumber() == 40) { colorThread.setSignalGo(false); }
 			setAcknowledgeToSend(true);
 		}
 		if (givenSignal == 10) { /* Anderer Zug befindet sich an Position 1 */
+			if (getPositionNumber() == 1) { }
+			if (getPositionNumber() == 2) { }
+			if (getPositionNumber() == 3) { }
 			if (getPositionNumber() == 20) { colorThread.setSignalGo(true); setPositionNumber(1); }
 			if (getPositionNumber() == 30) {
 				if (isHost()) {
 					colorThread.setSignalGo(true);
-					setPositionNumber(1); 
+					setPositionNumber(2); 
 				} else {
 					colorThread.setSignalGo(false);
 				}
 			}
-			if (getPositionNumber() == 40) { colorThread.setSignalGo(true); setPositionNumber(1); }
+			if (getPositionNumber() == 40) { colorThread.setSignalGo(true); setPositionNumber(3); }
 			setPositionNumberOfOtherTrain(givenSignal);
 			setAcknowledgeToSend(true);
 		}
 		if (givenSignal == 20) { /* Anderer Zug befindet sich an Position 2 */
+			if (getPositionNumber() == 1) { }
+			if (getPositionNumber() == 2) { }
+			if (getPositionNumber() == 3) { }
 			if (getPositionNumber() == 10) { colorThread.setSignalGo(true); setPositionNumber(1); }
-			if (getPositionNumber() == 30) { colorThread.setSignalGo(true);	setPositionNumber(1); }
-			if (getPositionNumber() == 40) { colorThread.setSignalGo(true); setPositionNumber(1); }
+			if (getPositionNumber() == 30) { colorThread.setSignalGo(true);	setPositionNumber(2); }
+			if (getPositionNumber() == 40) { colorThread.setSignalGo(true); setPositionNumber(3); }
 			setPositionNumberOfOtherTrain(givenSignal);
 			setAcknowledgeToSend(true);
 		}
 		if (givenSignal == 30) { /* Anderer Zug befindet sich an Position 3 */
+			if (getPositionNumber() == 1) { }
+			if (getPositionNumber() == 2) { }
+			if (getPositionNumber() == 3) { }
 			if (getPositionNumber() == 10) {
 				if (isHost()) {
 					colorThread.setSignalGo(true);
-					setPositionNumber(1); 
+					setPositionNumber(2); 
 				} else {
 					colorThread.setSignalGo(false);
 				}
 			}
 			if (getPositionNumber() == 20) { colorThread.setSignalGo(true);	setPositionNumber(1); }
-			if (getPositionNumber() == 40) { colorThread.setSignalGo(true); setPositionNumber(1); }
+			if (getPositionNumber() == 40) { colorThread.setSignalGo(true); setPositionNumber(3); }
 			setPositionNumberOfOtherTrain(givenSignal);
 			setAcknowledgeToSend(true);
 		}
 		if (givenSignal == 40) { /* Anderer Zug befindet sich an Position 4 */
-			if (getPositionNumber() == 10) { colorThread.setSignalGo(true); setPositionNumber(1); }
+			if (getPositionNumber() == 10) { colorThread.setSignalGo(true); setPositionNumber(2); }
 			if (getPositionNumber() == 20) { colorThread.setSignalGo(true); setPositionNumber(1); }
-			if (getPositionNumber() == 30) { colorThread.setSignalGo(true); setPositionNumber(1); }
+			if (getPositionNumber() == 30) { colorThread.setSignalGo(true); setPositionNumber(2); }
 			setPositionNumberOfOtherTrain(givenSignal);
 			setAcknowledgeToSend(true);
 		}
@@ -205,20 +220,19 @@ public class BluetoothThread extends Thread {
 	 * */
 	private void talkToOtherBrick() {
 		if (isWaiting()) {
-			sendSignal(getPositionNumber());
+			sendSignal();
 		} else if (((System.currentTimeMillis() / 1000) % 5) == 0) {
-			sendSignal(1);
+			sendSignal();
 		} else {}
 	}
 
 	/**
-	 * Sends all the necessary signals to the other NXT-Brick.
+	 * Sends all the necessary position signals to the other NXT-Brick.
 	 * 
-	 * @param int sendingSignal
 	 * */
-	private void sendSignal(int sendingSignal) {
+	private void sendSignal() {
 		try {
-			getOutputStream().write(sendingSignal);
+			getOutputStream().write(getPositionNumber());
 			getOutputStream().flush();
 		} catch (IOException e) {
 			LCD.clear();
