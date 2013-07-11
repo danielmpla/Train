@@ -67,7 +67,7 @@ public class BluetoothThread extends Thread {
 
 		setOutputStream(link.openDataOutputStream());
 		setInputStream(link.openDataInputStream());
-		getInputStream().mark(5);
+		getInputStream().mark(20);
 
 		LCD.clear();
 		LCD.drawString("success :)", 3, 3);
@@ -87,7 +87,7 @@ public class BluetoothThread extends Thread {
 
 		setOutputStream(link.openDataOutputStream());
 		setInputStream(link.openDataInputStream());
-		getInputStream().mark(5);
+		getInputStream().mark(20);
 
 		LCD.clear();
 		LCD.drawString("success :)", 3, 3);
@@ -164,8 +164,8 @@ public class BluetoothThread extends Thread {
 		} catch (IOException e) {
 			LCD.clear();
 			LCD.drawString("listening error", 3, 3);
-			Button.waitForAnyPress();
-			System.exit(1);
+			//Button.waitForAnyPress();
+			//System.exit(1);
 		}
 	}
 
