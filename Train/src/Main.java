@@ -9,6 +9,8 @@ public class Main {
 	static final int BLUE = 4;
 	static final int GREEN = 1;
 	static final int SPEED = 500;
+	static final int FORWARD = 1;
+	static final int BACKWARD = -1;
 
 	private BluetoothThread bluetoothThread;
 	
@@ -16,12 +18,10 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		new Main();
 	}
 
 	public Main() {
-		// int actualSpeed = 300;
 		Motor.B.setSpeed(SPEED);
 		Motor.C.setSpeed(SPEED);
 
@@ -30,8 +30,7 @@ public class Main {
 		String[] colorItems = { "1 (NXT_07)", "2 (NXT_03)", "3 (NXT4)" };
 		TextMenu trainSizeMenu = new TextMenu(trainItems, 2, "Zugart waehlen");
 		TextMenu colorIDMenu = new TextMenu(colorItems, 2, "Color ID waehlen");
-		TextMenu locationMenu = new TextMenu(locationItems, 2,
-				"Startpunktwahl!");
+		TextMenu locationMenu = new TextMenu(locationItems, 2, "Startpunktwahl!");
 
 		boolean isBigTrain;
 		int direction;
@@ -44,15 +43,14 @@ public class Main {
 		}
 
 		if (locationMenu.select() == 0) {
-			direction = 1;
+			direction = FORWARD;
 		} else {
-			direction = -1;
+			direction = BACKWARD;
 		}
 
 		colorSensorID = colorIDMenu.select() + 1;
 
-		ColorThread colorThread = new ColorThread(isBigTrain, colorSensorID,
-				direction);
+		ColorThread colorThread = new ColorThread(isBigTrain, colorSensorID, direction);
 		colorThread.setDaemon(true);
 		boolean isHost = colorSensorID == 2;
 		if (!isBigTrain) {
@@ -64,27 +62,16 @@ public class Main {
 		if (!isBigTrain) {
 			colorThread.setBluetoothThread(bluetoothThread);
 		}
-		if (direction == 1) {
+		if (direction == FORWARD) {
 			Motor.B.forward();
 			Motor.C.forward();
 		} else {
 			Motor.B.backward();
 			Motor.C.backward();
 		}
-		while (Button.readButtons() != Button.ID_ESCAPE) {
-			/*
-			 * if(Button.readButtons() == Button.ID_ENTER){
-			 * Motor.B.setSpeed(SPEED); Motor.C.setSpeed(SPEED); }
-			 */
-		}
+		while (Button.readButtons() != Button.ID_ESCAPE) {}
 		System.exit(0);
-		try {
-			colorThread.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		
 	}
 
 }

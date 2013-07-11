@@ -9,9 +9,7 @@ import lejos.robotics.Color;
 public class ColorThread extends Thread {
 
 	private ColorHTSensor colorSensor = new ColorHTSensor(SensorPort.S4);
-	private WaitOnColor waitOnColor = new WaitOnColor();
-	private int direction; // -1 kommt vom Kunde, 1 kommt vom Groï¿½handel (groï¿½er
-							// Zug umgekehrt!)
+	private int direction; // -1 kommt vom Kunde, 1 kommt vom Großhandel (großer Zug umgekehrt!)
 	private boolean isBigTrain;
 	private int colorSensorID;// NXT_07 = 1, NXT_03 = 2, NXT4 = 3
 	private boolean end = false;
@@ -42,26 +40,18 @@ public class ColorThread extends Thread {
 		switch (colorSensorID) {
 		case 1:
 			if (red > 185 && green > 25 && green < 110 && blue > 5 && blue < 75) { // ROT
-				
 				return Color.RED;
 			}
-			/*
-			 * if(red > 35 && red < 80 && green > 80 && green < 130 && blue >
-			 * 170 && blue < 255){ //BLAU return Color.BLUE; }
-			 */
 			if (red > 250 && green > 250 && blue < 45) { // GELB
-				
 				return Color.YELLOW;
 			}
 			
 			return 255;
 		case 2:
 			if (red > 170 && green > 20 && green < 55 && blue < 25) { // ROT
-				
 				return Color.RED;
 			}
 			if (red > 10 && red < 70 && green > 55 && green < 110 && blue > 180) { // BLAU
-				
 				return Color.BLUE;
 			}
 			if (red > 225 && green > 225 && blue < 25) { // GELB
@@ -119,7 +109,6 @@ public class ColorThread extends Thread {
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		int r = colorSensor.getColor().getRed();
@@ -135,14 +124,13 @@ public class ColorThread extends Thread {
 			case Color.RED:
 				LCD.clear();
 				LCD.drawString("ROT", 1, 2);
-				// waitOnColor.wait(Main.RED, true, 600);
 				Motor.B.stop(true);
 				Motor.C.stop(false);
 				color = colorSensor.getColor();
 				if(getColorID(color.getRed(), color.getGreen(), color.getBlue()) != Color.RED){
 					Motor.B.setSpeed(100);
 					Motor.C.setSpeed(100);
-					if (direction == 1) {
+					if (direction == Main.FORWARD) {
 						Motor.B.backward();
 						Motor.C.backward();
 					} else {
@@ -157,9 +145,8 @@ public class ColorThread extends Thread {
 					Motor.B.setSpeed(Main.SPEED);
 					Motor.C.setSpeed(Main.SPEED);
 				}
-				while (notGreen()) {
-				}
-				if (direction == -1) {
+				while(notGreen()){}
+				if (direction == Main.BACKWARD) {
 					Motor.B.backward();
 					Motor.C.backward();
 				} else {
@@ -179,7 +166,7 @@ public class ColorThread extends Thread {
 				if(getColorID(color.getRed(), color.getGreen(), color.getBlue()) == Color.BLUE){
 					Motor.B.setSpeed(100);
 					Motor.C.setSpeed(100);
-					if (direction == -1) {
+					if (direction == Main.BACKWARD) {
 						Motor.B.backward();
 						Motor.C.backward();
 					} else {
@@ -192,7 +179,6 @@ public class ColorThread extends Thread {
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					Motor.B.stop(true);
@@ -201,7 +187,7 @@ public class ColorThread extends Thread {
 					Motor.C.setSpeed(Main.SPEED);
 				}
 				bluetooth.setWaiting(true);
-				if (direction == 1) {
+				if (direction == Main.FORWARD) {
 					if (isBehindCross) {
 						bluetooth.setPositionNumber(40);//40
 						LCD.drawString("Signal 40", 5, 1);
@@ -223,11 +209,10 @@ public class ColorThread extends Thread {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-				if (direction == -1) {
+				if (direction == Main.BACKWARD) {
 					Motor.B.backward();
 					Motor.C.backward();
 				} else {
@@ -242,16 +227,13 @@ public class ColorThread extends Thread {
 			case Color.YELLOW:
 				LCD.clear();
 				LCD.drawString("GELB", 1, 2);
-				// waitOnColor.wait(Main.YELLOW, true, 600);
 				Motor.B.stop(true);
 				Motor.C.stop(true);
-				if (direction == -1 && !isBigTrain || direction == 1
-						&& isBigTrain) {
+				if (direction == Main.BACKWARD && !isBigTrain || direction == Main.FORWARD && isBigTrain) {
 					Motor.A.rotateTo(-30);
 					try {
 						Thread.sleep(2000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					Motor.A.rotateTo(0);
@@ -260,7 +242,7 @@ public class ColorThread extends Thread {
 				}
 				direction = direction * -1;
 				Motor.A.rotateTo(0);
-				if (direction == -1) {
+				if (direction == Main.BACKWARD) {
 					Motor.B.backward();
 					Motor.C.backward();
 				} else {
