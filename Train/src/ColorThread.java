@@ -9,10 +9,10 @@ import lejos.robotics.Color;
 public class ColorThread extends Thread {
 
 	private ColorHTSensor colorSensor = new ColorHTSensor(SensorPort.S4);
-	private int direction; // -1 kommt vom Kunde, 1 kommt vom Großhandel (großer Zug umgekehrt!)
+	private int direction; // -1 kommt vom Kunde, 1 kommt vom Groï¿½handel (groï¿½er Zug umgekehrt!)
 	private boolean isBigTrain;
 	private int colorSensorID;// NXT_07 = 1, NXT_03 = 2, NXT4 = 3
-	private boolean end = false;
+	private boolean signalGo = false;
 	private boolean isBehindCross = false;
 	private BluetoothThread bluetooth;
 	
@@ -28,8 +28,8 @@ public class ColorThread extends Thread {
 		bluetooth = blue;
 	}
 
-	public void setEnd(boolean b) {
-		end = b;
+	public void setSignalGo(boolean go) {
+		signalGo = go;
 	}
 
 	public int getColorID(int red, int green, int blue) {
@@ -204,8 +204,8 @@ public class ColorThread extends Thread {
 						LCD.drawString("Signal 30", 5, 1);
 					}
 				}
-				end = false;
-				while (!end) {
+				signalGo = false;
+				while (!signalGo) {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
