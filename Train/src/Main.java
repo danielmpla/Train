@@ -2,6 +2,11 @@ import lejos.nxt.Button;
 import lejos.nxt.Motor;
 import lejos.util.TextMenu;
 
+/**
+ * Is the Main program and starts the threads
+ * 
+ * @author Daniel
+ */
 public class Main {
 	static final int RED = 0;
 	static final int YELLOW = 3;
@@ -20,10 +25,17 @@ public class Main {
 		new Main();
 	}
 
+	/**
+	 * 
+	 */
 	public Main() {
 		Motor.B.setSpeed(SPEED);
 		Motor.C.setSpeed(SPEED);
 
+		/**
+		 * Creates the menu
+		 */
+		
 		String[] trainItems = { "kleiner Zug", "grosser Zug" };
 		String[] locationItems = { "Grosshandel", "Kunde" };
 		String[] colorItems = { "1 (NXT_07)", "2 (NXT_03)", "3 (NXT4)" };
@@ -35,6 +47,10 @@ public class Main {
 		int direction;
 		int colorSensorID;
 
+		/**
+		 * Stores the inputs of the menu
+		 */
+		
 		if (trainSizeMenu.select() == 0) {
 			isBigTrain = false;
 		} else {
@@ -49,18 +65,41 @@ public class Main {
 
 		colorSensorID = colorIDMenu.select() + 1;
 
+		/**
+		 * Initializes ColorThread
+		 */
+		
 		ColorThread colorThread = new ColorThread(isBigTrain, colorSensorID, direction);
 		colorThread.setDaemon(true);
 		boolean isHost = colorSensorID == 2;
+		
+		/**
+		 * Initializes BluetoothThread if it is a small train
+		 */
+		
 		if (!isBigTrain) {
 			bluetoothThread = new BluetoothThread(isHost, colorThread);
 			bluetoothThread.setDaemon(true);
 			bluetoothThread.start();
 		}
+		
+		/**
+		 * starts the ColorThread
+		 */
+		
 		colorThread.start();
+		/**
+		 * starts the BluetoothThread if it is a small train 
+		 */
+		
 		if (!isBigTrain) {
 			colorThread.setBluetoothThread(bluetoothThread);
 		}
+		
+		/**
+		 * starts the engines
+		 */
+		
 		if (direction == FORWARD) {
 			Motor.B.forward();
 			Motor.C.forward();
@@ -68,6 +107,11 @@ public class Main {
 			Motor.B.backward();
 			Motor.C.backward();
 		}
+		
+		/**
+		 * runs the program until ESCAPE is pressed
+		 */
+		
 		while (Button.readButtons() != Button.ID_ESCAPE) {}
 		System.exit(0);
 		

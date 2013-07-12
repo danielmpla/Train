@@ -4,17 +4,30 @@ import lejos.nxt.SensorPort;
 import lejos.nxt.addon.ColorHTSensor;
 import lejos.robotics.Color;
 
+/**
+ * checks the color under the sensor
+ * 
+ * @author Daniel
+ */
+/**
+ * @author Daniel
+ *
+ */
 public class ColorThread extends Thread {
 
 	private ColorHTSensor colorSensor = new ColorHTSensor(SensorPort.S4);
-	private int direction; // -1 kommt vom Kunde, 1 kommt vom Gro�handel (gro�er Zug umgekehrt!)
+	private int direction; // -1 comes from Client, 1 comes from wholesale trade (big train in reverse order)
 	private boolean isBigTrain;
-	private int colorSensorID;// NXT_07 = 1, NXT_03 = 2, NXT4 = 3
+	private int colorSensorID;//NXT_07 = 1, NXT_03 = 2, NXT4 = 3 which color Sensor we have
 	private boolean signalGo = false;
 	private boolean isBehindCross = false;
 	private BluetoothThread bluetooth;
 	
-	private float multiplier;
+	private static final int NXT_07 = 1;
+	private static final int NXT_03 = 2;
+	private static final int NXT4 = 3;
+	
+	private float multiplier; //multiplier for the color correction
 
 	public ColorThread(boolean isBigTrain, int colorSensorID, int direction) {
 		this.isBigTrain = isBigTrain;
@@ -30,13 +43,21 @@ public class ColorThread extends Thread {
 		signalGo = go;
 	}
 
+	/**
+	 * Decides which color the sensor has read on the basis of the colorSensorID
+	 * 
+	 * @param red red value of the color
+	 * @param green green value of the color
+	 * @param blue blue value of the color
+	 * @return A color id from the Color class
+	 */
 	public int getColorID(int red, int green, int blue) {
 		red = (int) (red * multiplier);
 		blue = (int) (blue * multiplier);
 		green = (int) (green * multiplier);
 		
 		switch (colorSensorID) {
-		case 1:
+		case NXT_07:
 			if (red > 185 && green > 25 && green < 110 && blue > 5 && blue < 75) { // ROT
 				return Color.RED;
 			}
@@ -45,7 +66,7 @@ public class ColorThread extends Thread {
 			}
 			
 			return 255;
-		case 2:
+		case NXT_03:
 			if (red > 170 && green > 20 && green < 55 && blue < 25) { // ROT
 				return Color.RED;
 			}
@@ -56,7 +77,7 @@ public class ColorThread extends Thread {
 				return Color.YELLOW;
 			}
 			return 255;
-		case 3:
+		case NXT4:
 			if (red > 225 && green > 25 && green < 75 && blue < 36) { // ROT
 				return Color.RED;
 			}
@@ -71,23 +92,29 @@ public class ColorThread extends Thread {
 			return 255;
 		}
 	}
-
+	
+	/**
+	 * Checks whether there is no green
+	 * 
+	 * @return true if there is no green
+	 */
+	
 	public boolean notGreen() {
 		switch (colorSensorID) {
-		case 1:
+		case NXT_07:
 			return !(colorSensor.getColor().getRed() * multiplier < 110
 					&& colorSensor.getColor().getRed() * multiplier > 10
 					&& colorSensor.getColor().getGreen() * multiplier > 55
 					&& colorSensor.getColor().getGreen() * multiplier < 170
 					&& colorSensor.getColor().getBlue() * multiplier > 35 && colorSensor
 					.getColor().getBlue() * multiplier < 110);
-		case 2:
+		case NXT_03:
 			return !(colorSensor.getColor().getRed() * multiplier < 80
 					&& colorSensor.getColor().getRed() * multiplier > 15
 					&& colorSensor.getColor().getGreen() * multiplier > 65
 					&& colorSensor.getColor().getBlue() * multiplier > 20 && colorSensor
 					.getColor().getBlue() * multiplier < 85);
-		case 3:
+		case NXT4:
 			return !(colorSensor.getColor().getRed() * multiplier < 115
 					&& colorSensor.getColor().getRed() * multiplier > 10
 					&& colorSensor.getColor().getGreen() * multiplier > 65
@@ -102,19 +129,35 @@ public class ColorThread extends Thread {
 		return direction;
 	}
 
+	/**
+	 * is the method that will be called if the Thread is started
+	 */
+	
 	public void run() {
+		/**
+		 * initialize the white balance of the color sensor
+		 */
 		while(colorSensor.initWhiteBalance() == 0){}
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
+		
+		/**
+		 * calculates the correction multipliere for the sensor
+		 */
+		
 		int r = colorSensor.getColor().getRed();
 		int g = colorSensor.getColor().getGreen();
 		int b = colorSensor.getColor().getBlue();
 		
 		float average = (r + g + b) / 3;
 		multiplier = 250 / average;
+		
+		/**
+		 * decides what to do with which color
+		 */
 		
 		while (true) {
 			Color color = colorSensor.getColor();
